@@ -1,4 +1,3 @@
-export SOON_PATH="$HOME/solana/soon"
 export BUILD_PROGRAMS=true
 
 export NODE_IMAGE_NAME=soon-node-latest

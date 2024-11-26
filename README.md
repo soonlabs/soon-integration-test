@@ -1,6 +1,36 @@
 
 ## Submodules
 
-run below command to recursively clone into all the submodules:
+When first cloning repo, run below command to recursively clone into all the submodules:
 
-`git submodule update --init --recursive`
+```sh
+git submodule update --init --recursive
+```
+
+## Setup
+
+Copy environmental variables and change according to your environment
+
+```sh
+cp .env.example .env
+```
+
+Build soon genesis block
+
+```sh
+make genesis
+```
+
+Build local docker files from soon monorepo binaries
+
+```sh
+make build
+```
+
+## Running script
+
+After setup you can run script to setup local docker network of L1, soon node, soon proposer
+
+```sh
+./l1-setup.sh`
+```
