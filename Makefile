@@ -23,3 +23,11 @@ down:
 build:
 	source build/.envrc && build/build.sh
 .PHONY: build
+
+genesis:
+	$(SOON_PATH)/target/release/soon-genesis \
+		-t ./.soon \
+		-p $(SOON_PATH)/node/programs/target/deploy \
+		--l1-cross-domain-messenger $(L1_STANDARD_BRIDGE_PROXY) \
+		--l1-standard-bridge $(L1_STANDARD_BRIDGE_PROXY) \
+		$(ARGS)
