@@ -1,0 +1,119 @@
+services:
+  anvil:
+    build: ./docker/anvil
+    ports:
+      - ${BIND_HOST:-0.0.0.0}:${ANVIL_PORT:-8545}:8545
+  node:
+    image: soon-node-local
+    container_name: ${NODE_CONTAINER_NAME:-node}
+    ports:
+      - ${BIND_HOST:-127.0.0.1}:${RPC_PORT:-8899}:8899
+      - ${BIND_HOST:-127.0.0.1}:${RPC_PUBSUB_PORT:-8900}:8900
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:8899/health"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 3s
+    restart: on-failure:5
+    stop_signal: SIGINT
+    stop_grace_period: 30s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 100m
+        max-file: "3"
+        labels: "env,service,project,org,group,team"
+    labels:
+      service: node
+      project: svm
+      org: soon
+      group: engineer
+      team: runtime,devops
+      env: ${ENV:-dev0}
+    volumes:
+      - ./.soon:/.soon
+    environment:
+      RUST_LOG: info,solana=warn,hyper=warn,alloy=warn,soon_storage=warn,soon_node::node::mpt=warn
+      SOON_NODE_STORAGE_PATH: /.soon
+      SOON_NODE_L1_RPC_URL: http://anvil:8545
+      SOON_NODE_DEPOSIT_CONTRACT: ${DEPOSIT_CONTRACT}
+      SOON_NODE_SYSTEM_CONFIG_CONTRACT: ${SYSTEM_CONFIG_CONTRACT}
+      SOON_NODE_ENABLE_DA: false
+      SOON_NODE_L1_BEACON_URL: http://anvil:8545
+      SOON_NODE_DEV_MODE: ${SOON_NODE_DEV_MODE}
+      SOON_NODE_ENABLE_FAUCET: ${SOON_NODE_ENABLE_FAUCET}
+      # SOON_NODE_START_L1_BLOCK: ${START_L1_BLOCK}
+      # SOON_NODE_RPC_BIND_ADDRESS: ${BIND_HOST}
+
+  proposer:
+    image: soon-proposer-local
+    container_name: ${PROPOSER_CONTAINER_NAME:-proposer}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - ${BIND_HOST:-127.0.0.1}:${PROPOSER_PORT:-8560}:8560
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:8560/health"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 3s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 100m
+        max-file: "3"
+        labels: "env,service,project,org,group,team"
+    labels:
+      service: proposer
+      project: svm
+      org: soon
+      group: engineer
+      team: runtime,devops
+      env: ${ENV:-dev0}
+    restart: on-failure:5
+    environment:
+      RUST_LOG: info
+      L1_ETH_RPC: http://anvil:8545
+      ROLLUP_RPC: http://node:8899
+      SOON_RPC: http://node:8899
+      L2OO_ADDRESS: ${L2OO_ADDRESS}
+      POLL_INTERVAL: 6000
+      PRIVATE_KEY: ${PROPOSER_ADMIN_SECRET}
+
+      WAIT_HOSTS: node:8899
+      WAIT_TIMEOUT: 300
+
+  nginx:
+    image: nginx:alpine
+    container_name: ${NGINX_CONTAINER_NAME:-nginx}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - ${BIND_HOST:-127.0.0.1}:${NGINX_PORT:-8000}:80
+    volumes:
+      - ./docker/nginx/html:/usr/share/nginx/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost/.deploy"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 3s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 100m
+        max-file: "3"
+        labels: "env,service,project,org,group,team"
+    labels:
+      service: nginx
+      project: svm
+      org: soon
+      group: engineer
+      team: runtime,devops
+      env: ${ENV:-dev0}
+    restart: on-failure:5

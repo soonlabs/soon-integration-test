@@ -1,0 +1,6 @@
+export SOON_PATH="$HOME/solana/soon"
+export BUILD_PROGRAMS=true
+
+export NODE_IMAGE_NAME=soon-node-latest
+export PROPOSER_IMAGE_NAME=soon-proposer-latest
+

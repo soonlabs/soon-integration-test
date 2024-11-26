@@ -1,1 +1,4 @@
-.envrc
+.env
+.soon/ledger
+.soon/mpt
+build/.envrc
