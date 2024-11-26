@@ -1,0 +1,6 @@
+[submodule "soon"]
+	path = soon
+	url = https://github.com/soonlabs/soon.git
+[submodule "soon-bridge-tool"]
+	path = soon-bridge-tool
+	url = https://github.com/soonlabs/soon-bridge-tool

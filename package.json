@@ -1,0 +1,7 @@
+{
+  "name": "soon-ts-e2e-tests",
+  "version": "1.0.0",
+  "description": "Soon e2e test suite",
+  "main": "index.js",
+  "license": "MIT"
+}
