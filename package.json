@@ -3,5 +3,13 @@
   "version": "1.0.0",
   "description": "Soon e2e test suite",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "test": "LOG_LEVEL=warn vitest run"
+  },
+  "dependencies": {
+    "soon-birdge-tool": "file:./soon-bridge-tool/",
+    "vitest": "^2.1.6",
+    "@solana/web3.js": "^1.93.1"
+  }
 }
