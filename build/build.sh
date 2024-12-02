@@ -46,10 +46,7 @@ function install() {
 function build_soon() {
 	cd $SOON_PATH
 	if [[ "$OS" == "Linux" && "$ARCH" == "x86_64" ]]; then
-		cargo build --release
-		if [ $BUILD_PROGRAMS == "true" ]; then
-			cargo build-sbf --manifest-path node/programs/Cargo.toml
-		fi
+		make all
 	else
 		CROSS_CONTAINER_OPTS="--platform linux/amd64" cross build --release --target x86_64-unknown-linux-gnu
 	fi
