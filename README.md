@@ -27,10 +27,18 @@ Build local docker files from soon monorepo binaries
 make build
 ```
 
-## Running script
+## Running setup script
 
 After setup you can run script to setup local docker network of L1, soon node, soon proposer
 
 ```sh
 ./l1-setup.sh`
+```
+
+## Run Tests
+
+With docker network up and running in another terminal run tests with command below
+
+```sh
+yarn && yarn tests
 ```
