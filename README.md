@@ -27,6 +27,12 @@ Build local docker files from soon monorepo binaries
 make build
 ```
 
+Helper script to automate setting variables .env
+
+```sh
+./set-env.sh
+```
+
 ## Running setup script
 
 After setup you can run script to setup local docker network of L1, soon node, soon proposer
