@@ -1,3 +1,4 @@
 export NODE_IMAGE_NAME=soon-node-latest
 export PROPOSER_IMAGE_NAME=soon-proposer-latest
+export BATCHER_IMAGE_NAME=soon-batcher-latest
 

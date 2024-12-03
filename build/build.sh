@@ -68,6 +68,10 @@ echo "Building proposer docker image..."
 cp $SOON_PATH/target/release/proposer $CURRENT_PATH/build/proposer
 docker_build "$CURRENT_PATH/build/proposer" "$PROPOSER_IMAGE_NAME"
 
+echo "building batcher docker image..."
+cp $SOON_PATH/target/release/batcher $CURRENT_PATH/build/batcher
+docker_build "$CURRENT_PATH/build/batcher" "$BATCHER_IMAGE_NAME"
+
 echo "== Building docker image done!"
 
 
