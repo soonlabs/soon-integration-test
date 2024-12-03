@@ -32,3 +32,7 @@ genesis:
 		--l1-cross-domain-messenger $(L1_CROSS_DOMAIN_PROXY) \
 		--l1-standard-bridge $(L1_STANDARD_BRIDGE_PROXY) \
 		$(ARGS)
+
+set-env:
+	./set-env.sh
+.PHONY: set-env

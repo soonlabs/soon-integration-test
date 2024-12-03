@@ -2,4 +2,4 @@ FROM ghcr.io/foundry-rs/foundry
 
 WORKDIR /anvil
 
-ENTRYPOINT anvil --host 127.0.0.1 -b 12
+ENTRYPOINT anvil --host 0.0.0.0 --block-time 12 --mixed-mining
