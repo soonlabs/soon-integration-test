@@ -45,6 +45,12 @@ beforeAll(() => {
     const rawData = fs.readFileSync(deploymentPath, 'utf8');
     deploymentData = JSON.parse(rawData);
     
+    // Initialize contract addresses from deployment
+    process.env.L2OO_ADDRESS = deploymentData.L2OutputOracleProxy;
+    process.env.L1_STANDARD_BRIDGE_PROXY = deploymentData.L1StandardBridgeProxy;
+    process.env.SYSTEM_CONFIG_PROXY = deploymentData.SystemConfigProxy;
+    process.env.L1_CROSS_DOMAIN_PROXY = deploymentData.L1CrossDomainMessengerProxy;
+    
     console.log('Loaded deployment data:');
     console.log(JSON.stringify(deploymentData, null, 2));
 });
