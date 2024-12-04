@@ -51,6 +51,13 @@ beforeAll(() => {
     process.env.SYSTEM_CONFIG_PROXY = deploymentData.SystemConfigProxy;
     process.env.L1_CROSS_DOMAIN_PROXY = deploymentData.L1CrossDomainMessengerProxy;
     
+    // Log environment variables to confirm they are set correctly
+    console.log('Environment variables set from deployment:');
+    console.log('L2OO_ADDRESS:', process.env.L2OO_ADDRESS);
+    console.log('L1_STANDARD_BRIDGE_PROXY:', process.env.L1_STANDARD_BRIDGE_PROXY);
+    console.log('SYSTEM_CONFIG_PROXY:', process.env.SYSTEM_CONFIG_PROXY);
+    console.log('L1_CROSS_DOMAIN_PROXY:', process.env.L1_CROSS_DOMAIN_PROXY);
+    
     console.log('Loaded deployment data:');
     console.log(JSON.stringify(deploymentData, null, 2));
 });
