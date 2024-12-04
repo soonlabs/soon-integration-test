@@ -1,6 +1,7 @@
 services:
   anvil:
     build: ./docker/anvil
+    platform: linux/amd64
     ports:
       - ${BIND_HOST:-0.0.0.0}:${ANVIL_PORT:-8545}:8545
   

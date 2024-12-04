@@ -42,17 +42,22 @@ WORKDIR=$(pwd)
 mkdir -p $WORKDIR/deployments
 
 # Deploy contracts using local config
+# forge restrict only visit files in current directory
 (
     cd $SOON_PATH/contracts &&
+        cp $WORKDIR/l1_deploy_config.json deploy-config &&
         DEPLOYMENT_OUTFILE=deployments/it-deploy.json \
-            DEPLOY_CONFIG_PATH=$WORKDIR/l1_deploy_config.json \
+            DEPLOY_CONFIG_PATH=deploy-config/l1_deploy_config.json \
             forge script scripts/deploy/Deploy.s.sol:Deploy \
             --broadcast \
             --private-key $GS_ADMIN_PRIVATE_KEY \
             --rpc-url $L1_RPC_URL \
             --legacy \
-            --skip-simulation &&
-        cp deployments/it-deploy.json $WORKDIR/deployments/it-deploy.json
+            --skip-simulation \
+            --lib-paths $WORKDIR &&
+        cp deployments/it-deploy.json $WORKDIR/deployments/it-deploy.json &&
+        rm deploy-config/l1_deploy_config.json &&
+        rm deployments/it-deploy.json
 )
 
 # spin down docker containers
