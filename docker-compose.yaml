@@ -3,6 +3,7 @@ services:
     build: ./docker/anvil
     ports:
       - ${BIND_HOST:-0.0.0.0}:${ANVIL_PORT:-8545}:8545
+  
   node:
     image: soon-node-latest
     container_name: ${NODE_CONTAINER_NAME:-node}
