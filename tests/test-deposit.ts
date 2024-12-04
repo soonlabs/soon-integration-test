@@ -75,15 +75,15 @@ describe("test deposit", () => {
         .sub(receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice))
     ).toEqual(endBalance);
 
+    // wait sequencer to track.
+    await sleep(1000);
+
     // check balance on SOON
     const endingAccount = await SVMContext.SVM_Connection.getAccountInfo(
       SVMContext.SVM_USER.publicKey
     );
     expect(endingAccount).not.toBeNull();
     const endSol = endingAccount?.lamports;
-
-    // wait sequencer to track.
-    await sleep(1000);
 
     console.log(`start: ${startingSol}, end: ${endSol}`);
     expect(startingSol + oneSol * 0.1).toEqual(endSol);

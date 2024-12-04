@@ -4,7 +4,7 @@ services:
     platform: linux/amd64
     ports:
       - ${BIND_HOST:-0.0.0.0}:${ANVIL_PORT:-8545}:8545
-  
+
   node:
     image: soon-node-latest
     container_name: ${NODE_CONTAINER_NAME:-node}
@@ -41,7 +41,7 @@ services:
       RUST_LOG: info,solana=warn,hyper=warn,alloy=warn,soon_storage=warn,soon_node::node::mpt=warn
       SOON_NODE_STORAGE_PATH: /.soon
       SOON_NODE_L1_RPC_URL: http://anvil:8545
-      SOON_NODE_DEPOSIT_CONTRACT: ${L1_STANDARD_BRIDGE_PROXY}
+      SOON_NODE_DEPOSIT_CONTRACT: ${OPTIMISM_PORTAL_PROXY}
       SOON_NODE_SYSTEM_CONFIG_CONTRACT: ${SYSTEM_CONFIG_PROXY}
       SOON_NODE_ENABLE_DA: false
       SOON_NODE_L1_BEACON_URL:
