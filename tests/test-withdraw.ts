@@ -47,7 +47,7 @@ describe('test withdraw', () => {
         if (!accountInfo || accountInfo.lamports < oneSol) {
             await SVMContext.SVM_Connection.requestAirdrop(
                 SVMContext.SVM_USER.publicKey,
-                oneSol * 1.1
+                oneSol * 100
             );
         }
     })
@@ -147,7 +147,8 @@ describe('test withdraw', () => {
         let svmContext = await createSVMContext();
 
         // fast foward l2
-        await spamL2Tx(SVMContext, 30);
+        await spamL2Tx(SVMContext, 50);
+        await spamL1Tx(EVMContext, 100);
 
         //get output root proof
         const response = await axios.post(svmContext.SVM_SOON_RPC_URL, {
@@ -158,7 +159,6 @@ describe('test withdraw', () => {
         });
         console.log('response data:', response.data);
 
-        let EVMContext = await createEVMContext();
         const OptimismPortal = OptimismPortal__factory.connect(
             EVMContext.EVM_OP_PORTAL,
             EVMContext.EVM_USER,
@@ -206,5 +206,13 @@ async function spamL2Tx(svmContext: SVM_CONTEXT, loopNum: number) {
 }
 
 async function spamL1Tx(evmContext: EVM_CONTEXT, loopNum: number) {
+    for (let i = 0; i < loopNum; i++) {
+        await evmContext.EVM_USER.sendTransaction({
+            to: '0x92d3267215Ec56542b985473E73C8417403B15ac',
+            value: ethers.parseUnits('0.00000001', 'ether'),
+        }
+        );
 
+        await sleep(30);
+    }
 }
