@@ -61,4 +61,4 @@ mkdir -p $WORKDIR/deployments
 )
 
 # spin up docker containers
-make up
+# make up
