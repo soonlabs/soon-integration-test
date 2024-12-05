@@ -56,6 +56,7 @@ beforeAll(() => {
   process.env.SYSTEM_CONFIG_PROXY = deploymentData.SystemConfigProxy;
   process.env.L1_CROSS_DOMAIN_PROXY =
     deploymentData.L1CrossDomainMessengerProxy;
+  process.env.SOON_NODE_DEPOSIT_CONTRACT = deploymentData.OptimismPortalProxy;
 
   // Log environment variables to confirm they are set correctly
   console.log("Environment variables set from deployment:");
@@ -63,6 +64,7 @@ beforeAll(() => {
   console.log("EVM_STANDARD_BRIDGE:", process.env.EVM_STANDARD_BRIDGE);
   console.log("SYSTEM_CONFIG_PROXY:", process.env.SYSTEM_CONFIG_PROXY);
   console.log("L1_CROSS_DOMAIN_PROXY:", process.env.L1_CROSS_DOMAIN_PROXY);
+  console.log("SOON_NODE_DEPOSIT_CONTRACT", process.env.SOON_NODE_DEPOSIT_CONTRACT);
 
   console.log("Loaded deployment data:");
   console.log(JSON.stringify(deploymentData, null, 2));

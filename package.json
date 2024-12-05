@@ -5,11 +5,13 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "LOG_LEVEL=warn vitest run"
+    "test": "LOG_LEVEL=warn vitest run --no-file-parallelism"
   },
   "dependencies": {
+    "@solana/web3.js": "^1.93.1",
+    "axios": "^1.7.9",
+    "ethers": "^6.13.4",
     "soon-birdge-tool": "file:./soon-bridge-tool/",
-    "vitest": "^2.1.6",
-    "@solana/web3.js": "^1.93.1"
+    "vitest": "^2.1.6"
   }
 }

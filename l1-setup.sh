@@ -60,8 +60,5 @@ mkdir -p $WORKDIR/deployments
         rm deployments/it-deploy.json
 )
 
-# spin down docker containers
-# make logs
-
-# kill all child processes
-# pkill -P $$
+# spin up docker containers
+make up

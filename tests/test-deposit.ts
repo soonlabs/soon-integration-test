@@ -12,7 +12,7 @@ import {
   createSVMContext,
 } from "soon-birdge-tool/src/helper/svm_context";
 import { base58PublicKeyToHex, sleep } from "soon-birdge-tool/src/helper/tool";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { Keypair, LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 const gasLimit = 100000;
 const tenthETH: bigint = 100_000_000_000_000_000n;
@@ -22,8 +22,13 @@ describe("test deposit", () => {
   let EVMContext: EVM_CONTEXT;
   let SVMContext: SVM_CONTEXT;
   let L1Bridge: L1StandardBridge;
+  let svmAccount: Keypair;
 
   beforeAll(async function () {
+    svmAccount = Keypair.generate();
+    process.env.SVM_USER_KEY = `[${svmAccount.secretKey.toString()}]`;
+    process.env.SVM_USER_ADDRESS = svmAccount.publicKey.toBase58();
+
     EVMContext = await createEVMContext();
     SVMContext = await createSVMContext();
     L1Bridge = L1StandardBridge__factory.connect(

@@ -80,7 +80,6 @@ services:
     environment:
       RUST_LOG: info
       L1_ETH_RPC: http://anvil:8545
-      ALLOW_NON_FINALIZED: true
       SOON_RPC: http://node:8899
       L2OO_ADDRESS: ${L2OO_ADDRESS}
       POLL_INTERVAL: 6000
