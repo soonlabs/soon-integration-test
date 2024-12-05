@@ -1,4 +1,4 @@
-import { describe, it, test, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll } from "vitest";
 import {
   L1StandardBridge,
   L1StandardBridge__factory,
@@ -33,17 +33,17 @@ describe("test deposit", () => {
     SVMContext = await createSVMContext();
     L1Bridge = L1StandardBridge__factory.connect(
       EVMContext.EVM_STANDARD_BRIDGE,
-      EVMContext.EVM_USER
+      EVMContext.EVM_USER,
     );
 
     // init account space on SOON.
     const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey
+      SVMContext.SVM_USER.publicKey,
     );
     if (!accountInfo) {
       await SVMContext.SVM_Connection.requestAirdrop(
         SVMContext.SVM_USER.publicKey,
-        oneSol
+        oneSol,
       );
     }
   });
@@ -51,7 +51,7 @@ describe("test deposit", () => {
   it("deposit", async function () {
     const startingBalance = await EVMContext.EVM_USER.getBalance();
     const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey
+      SVMContext.SVM_USER.publicKey,
     );
     expect(accountInfo).not.toBeNull();
     const startingSol = accountInfo?.lamports ?? 0;
@@ -64,20 +64,20 @@ describe("test deposit", () => {
         {
           value: tenthETH,
           gasLimit: 1000000,
-        }
+        },
       )
     ).wait(1);
 
     console.log(`Deposit ETH success. txHash: ${receipt.transactionHash}`);
 
     const endBalance = await EVMContext.EVM_PROVIDER.getBalance(
-      EVMContext.EVM_USER.address
+      EVMContext.EVM_USER.address,
     );
     // check that balances on L1 match
     expect(
       startingBalance
         .sub(tenthETH)
-        .sub(receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice))
+        .sub(receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice)),
     ).toEqual(endBalance);
 
     // wait sequencer to track.
@@ -85,7 +85,7 @@ describe("test deposit", () => {
 
     // check balance on SOON
     const endingAccount = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey
+      SVMContext.SVM_USER.publicKey,
     );
     expect(endingAccount).not.toBeNull();
     const endSol = endingAccount?.lamports;

@@ -1,4 +1,3 @@
-
 ## Submodules
 
 When first cloning repo, run below command to recursively clone into all the submodules:
@@ -46,6 +45,7 @@ yarn && yarn tests
 ## Important config
 
 ### l1_deploy_config.json
+
 l1BlockTime: adjust l1 block interval, you can speed up or down finalizing of l1.
 
 l2OutputOracleSubmissionInterval: adjust proposer l2 root submit interval, you can speed up your withdrawal proposing.

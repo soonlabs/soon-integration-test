@@ -1,7 +1,5 @@
-import { describe, it, test, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll } from "vitest";
 import {
-  L1StandardBridge,
-  L1StandardBridge__factory,
   OptimismPortal__factory,
   L2OutputOracle__factory,
 } from "soon-birdge-tool/typechain-types";
@@ -34,7 +32,6 @@ import axios from "axios";
 import bs58 from "bs58";
 
 import {
-  base58PublicKeyToHex,
   isValidEthereumAddress,
   parseWithdrawTxInfo,
   sleep,
@@ -61,12 +58,12 @@ describe("test withdraw", () => {
 
     // init account space on SOON.
     const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey
+      SVMContext.SVM_USER.publicKey,
     );
     if (!accountInfo || accountInfo.lamports < 2 * oneSol) {
       await SVMContext.SVM_Connection.requestAirdrop(
         SVMContext.SVM_USER.publicKey,
-        oneSol * 2
+        oneSol * 2,
       );
     }
   });
@@ -77,12 +74,12 @@ describe("test withdraw", () => {
     expect(isValidEthereumAddress(l1Target)).toBeTruthy();
 
     console.log(
-      `withdrawal from ${SVMContext.SVM_USER.publicKey.toBase58()} to ${l1Target}`
+      `withdrawal from ${SVMContext.SVM_USER.publicKey.toBase58()} to ${l1Target}`,
     );
 
     const counterKey = genProgramDataAccountKey(
       "svm-withdraw-counter",
-      SVMContext.SVM_BRIDGE_PROGRAM_ID
+      SVMContext.SVM_BRIDGE_PROGRAM_ID,
     );
     console.log(`Counter key: ${counterKey.toString()}`);
 
@@ -90,7 +87,7 @@ describe("test withdraw", () => {
       await SVMContext.SVM_Connection.getAccountInfo(counterKey);
 
     const startingInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey
+      SVMContext.SVM_USER.publicKey,
     );
     expect(startingInfo).not.toBeNull();
     const startingSol = startingInfo?.lamports ?? 0;
@@ -102,7 +99,7 @@ describe("test withdraw", () => {
     // get withdraw tx key
     let [key] = PublicKey.findProgramAddressSync(
       [withdrawTxSeed],
-      SVMContext.SVM_BRIDGE_PROGRAM_ID
+      SVMContext.SVM_BRIDGE_PROGRAM_ID,
     );
     withdrawTxKey = key;
     console.log(`Withdraw ID: ${withdrawTxKey.toString()}`);
@@ -114,14 +111,14 @@ describe("test withdraw", () => {
     // get bridge config key
     const bridgeConfigKey = genProgramDataAccountKey(
       "bridge-config",
-      DEFAULT_BRIDGE_PROGRAM
+      DEFAULT_BRIDGE_PROGRAM,
     );
     console.log(`bridgeConfigKey key: ${bridgeConfigKey.toString()}`);
 
     let withdrawalAmount = oneSol * 0.5;
 
     const instructionIndex = Buffer.from(
-      Int8Array.from([BridgeInstructionIndex.WithdrawETH])
+      Int8Array.from([BridgeInstructionIndex.WithdrawETH]),
     );
     const instruction = new TransactionInstruction({
       data: Buffer.concat([
@@ -162,7 +159,7 @@ describe("test withdraw", () => {
 
     const newWithdrawalAccountIndex =
       txInfo?.transaction.message.accountKeys.findIndex(
-        (acc) => acc.pubkey.toString() === withdrawTxKey.toString()
+        (acc) => acc.pubkey.toString() === withdrawTxKey.toString(),
       ) ?? -1;
     expect(newWithdrawalAccountIndex).toBeGreaterThanOrEqual(0);
     let after = txInfo?.meta?.postBalances?.[newWithdrawalAccountIndex] ?? 0;
@@ -178,12 +175,12 @@ describe("test withdraw", () => {
     feePaid ??= 0;
 
     const endingInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey
+      SVMContext.SVM_USER.publicKey,
     );
     expect(endingInfo).not.toBeNull();
     const endingSol = endingInfo?.lamports ?? 0;
     expect(startingSol - feePaid - rentPaid - withdrawalAmount).toEqual(
-      endingSol
+      endingSol,
     );
     console.log(`start SOL: ${startingSol} ending SOL: ${endingSol}`);
   });
@@ -194,13 +191,13 @@ describe("test withdraw", () => {
     // 3. generate proof and verify.
     const OptimismPortal = OptimismPortal__factory.connect(
       EVMContext.EVM_OP_PORTAL,
-      EVMContext.EVM_USER
+      EVMContext.EVM_USER,
     );
     const l2OutputOracleAddress = await OptimismPortal.l2Oracle();
     console.log(`l2OutputOracleAddress: ${l2OutputOracleAddress}`);
     const L2OutputOracle = L2OutputOracle__factory.connect(
       l2OutputOracleAddress,
-      EVMContext.EVM_PROPOSER!
+      EVMContext.EVM_PROPOSER!,
     );
 
     let proposedHeight;
@@ -210,7 +207,7 @@ describe("test withdraw", () => {
         break;
       }
       console.log(
-        `not proposed yet. current proposed l2 height: ${proposedHeight}, withdraw height: ${withdrawHeight}`
+        `not proposed yet. current proposed l2 height: ${proposedHeight}, withdraw height: ${withdrawHeight}`,
       );
       spamL2Tx(SVMContext, 10);
       await sleep(3000);
@@ -236,12 +233,12 @@ describe("test withdraw", () => {
     console.log("getSoonWithdrawalProof response data:", response1.data);
 
     const withdrawInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      new PublicKey(withdrawTxKey)
+      new PublicKey(withdrawTxKey),
     );
     expect(withdrawInfo).not.toBeNull();
     expect(withdrawInfo?.data.length).toBeGreaterThan(148);
     const withdrawTx = parseWithdrawTxInfo(
-      withdrawInfo?.data ?? Buffer.from("")
+      withdrawInfo?.data ?? Buffer.from(""),
     );
     console.log("withdrawTx:", withdrawTx);
 
@@ -250,7 +247,7 @@ describe("test withdraw", () => {
     const hexPubkey = ethers.hexlify(bs58.decode(withdrawTxKey.toString()));
     const receipt = await (
       await OptimismPortal.connect(
-        EVMContext.EVM_USER
+        EVMContext.EVM_USER,
       ).proveWithdrawalTransaction(
         withdrawTx,
         l2OutputIndex,
@@ -265,12 +262,12 @@ describe("test withdraw", () => {
         response1.data.result.withdrawalProof,
         {
           gasLimit: 1000000,
-        }
+        },
       )
     ).wait(1);
 
     console.log(
-      `Withdraw tx prove success. txHash: ${receipt.transactionHash}`
+      `Withdraw tx prove success. txHash: ${receipt.transactionHash}`,
     );
   });
 });
@@ -282,7 +279,7 @@ async function spamL2Tx(svmContext: SVM_CONTEXT, loopNum: number) {
   for (let i = 0; i < loopNum; i++) {
     await svmContext.SVM_Connection.requestAirdrop(
       allocatedAccount.publicKey,
-      100000
+      100000,
     );
 
     await sleep(60);

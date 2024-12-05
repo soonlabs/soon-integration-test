@@ -44,7 +44,7 @@ beforeAll(() => {
   const deploymentPath = path.join(
     process.cwd(),
     "deployments",
-    "it-deploy.json"
+    "it-deploy.json",
   );
   const rawData = fs.readFileSync(deploymentPath, "utf8");
   deploymentData = JSON.parse(rawData);
@@ -64,7 +64,10 @@ beforeAll(() => {
   console.log("EVM_STANDARD_BRIDGE:", process.env.EVM_STANDARD_BRIDGE);
   console.log("SYSTEM_CONFIG_PROXY:", process.env.SYSTEM_CONFIG_PROXY);
   console.log("L1_CROSS_DOMAIN_PROXY:", process.env.L1_CROSS_DOMAIN_PROXY);
-  console.log("SOON_NODE_DEPOSIT_CONTRACT", process.env.SOON_NODE_DEPOSIT_CONTRACT);
+  console.log(
+    "SOON_NODE_DEPOSIT_CONTRACT",
+    process.env.SOON_NODE_DEPOSIT_CONTRACT,
+  );
 
   console.log("Loaded deployment data:");
   console.log(JSON.stringify(deploymentData, null, 2));
