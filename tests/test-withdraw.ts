@@ -244,7 +244,9 @@ describe("test withdraw", () => {
 
     const l2OutputIndex =
       await L2OutputOracle.getL2OutputIndexAfter(proposedHeight);
-    const hexPubkey = ethers.utils.hexlify(bs58.decode(withdrawTxKey.toString()));
+    const hexPubkey = ethers.utils.hexlify(
+      bs58.decode(withdrawTxKey.toString()),
+    );
     const receipt = await (
       await OptimismPortal.connect(
         EVMContext.EVM_USER,
