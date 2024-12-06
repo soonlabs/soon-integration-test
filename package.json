@@ -5,18 +5,21 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "LOG_LEVEL=warn vitest run --no-file-parallelism",
-    "fmt": "yarn prettier . --write"
+    "test": "LOG_LEVEL=warn vitest run test-erc-20-deposit.ts --no-file-parallelism",
+    "fmt": "yarn prettier . --write",
+    "generate-typechain": "yarn typechain --target ethers-v5 --out-dir typechain './contracts/out/TestErc20.sol/*.json'"
   },
   "dependencies": {
     "@solana/web3.js": "^1.93.1",
     "axios": "^1.7.9",
     "bs58": "^6.0.0",
-    "ethers": "^6.13.4",
+    "ethers": "^5.7.2",
     "soon-birdge-tool": "file:./soon-bridge-tool/",
     "vitest": "^2.1.6"
   },
   "devDependencies": {
-    "prettier": "^3.4.2"
+    "@typechain/ethers-v5": "^11.1.1",
+    "prettier": "^3.4.2",
+    "typechain": "^8.3.2"
   }
 }

@@ -5,3 +5,5 @@ build/.envrc
 package-lock.json
 yarn.lock
 deployments
+contracts/cache
+contracts/out

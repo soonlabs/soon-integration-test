@@ -123,7 +123,7 @@ describe("test withdraw", () => {
     const instruction = new TransactionInstruction({
       data: Buffer.concat([
         instructionIndex,
-        Buffer.concat([ethers.getBytes(l1Target)]),
+        Buffer.concat([ethers.utils.arrayify(l1Target)]),
         new Numberu128(withdrawalAmount).toBuffer(),
         new Numberu128(gasLimit).toBuffer(),
       ]),
@@ -244,7 +244,7 @@ describe("test withdraw", () => {
 
     const l2OutputIndex =
       await L2OutputOracle.getL2OutputIndexAfter(proposedHeight);
-    const hexPubkey = ethers.hexlify(bs58.decode(withdrawTxKey.toString()));
+    const hexPubkey = ethers.utils.hexlify(bs58.decode(withdrawTxKey.toString()));
     const receipt = await (
       await OptimismPortal.connect(
         EVMContext.EVM_USER,
@@ -290,7 +290,7 @@ async function spamL1Tx(evmContext: EVM_CONTEXT, loopNum: number) {
   for (let i = 0; i < loopNum; i++) {
     await evmContext.EVM_USER.sendTransaction({
       to: "0x92d3267215Ec56542b985473E73C8417403B15ac",
-      value: ethers.parseUnits("0.00000001", "ether"),
+      value: ethers.utils.parseUnits("0.00000001", "ether"),
     });
 
     await sleep(30);
