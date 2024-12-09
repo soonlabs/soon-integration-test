@@ -46,6 +46,7 @@ describe("test deposit", () => {
         oneSol,
       );
     }
+    await sleep(100);
   });
 
   it("deposit", async function () {

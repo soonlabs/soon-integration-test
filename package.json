@@ -5,12 +5,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "LOG_LEVEL=warn vitest run test-erc-20-deposit.ts --no-file-parallelism",
+    "test": "LOG_LEVEL=warn vitest run --no-file-parallelism",
     "fmt": "yarn prettier . --write",
     "generate-typechain": "yarn typechain --target ethers-v5 --out-dir typechain './contracts/out/TestErc20.sol/*.json'"
   },
   "dependencies": {
-    "@solana/web3.js": "^1.93.1",
+    "@solana/web3.js": "^1.95.8",
     "axios": "^1.7.9",
     "bs58": "^6.0.0",
     "ethers": "^5.7.2",

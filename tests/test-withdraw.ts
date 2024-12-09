@@ -36,6 +36,7 @@ import {
   parseWithdrawTxInfo,
   sleep,
 } from "soon-birdge-tool/src/helper/tool";
+import { spamL2Tx } from "./helper/spam-utils";
 
 const gasLimit = 100000;
 const oneSol = LAMPORTS_PER_SOL;
@@ -66,6 +67,7 @@ describe("test withdraw", () => {
         oneSol * 2,
       );
     }
+    await sleep(100);
   });
 
   // sequential test for each step of withdraw process
@@ -273,28 +275,3 @@ describe("test withdraw", () => {
     );
   });
 });
-
-async function spamL2Tx(svmContext: SVM_CONTEXT, loopNum: number) {
-  // Allocate Account Data
-  let allocatedAccount = Keypair.generate();
-
-  for (let i = 0; i < loopNum; i++) {
-    await svmContext.SVM_Connection.requestAirdrop(
-      allocatedAccount.publicKey,
-      100000,
-    );
-
-    await sleep(60);
-  }
-}
-
-async function spamL1Tx(evmContext: EVM_CONTEXT, loopNum: number) {
-  for (let i = 0; i < loopNum; i++) {
-    await evmContext.EVM_USER.sendTransaction({
-      to: "0x92d3267215Ec56542b985473E73C8417403B15ac",
-      value: ethers.utils.parseUnits("0.00000001", "ether"),
-    });
-
-    await sleep(30);
-  }
-}
