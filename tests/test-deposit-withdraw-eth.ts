@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import {
+  L1StandardBridge,
+  L1StandardBridge__factory,
   OptimismPortal__factory,
   L2OutputOracle__factory,
 } from "soon-birdge-tool/typechain-types";
@@ -7,10 +9,6 @@ import {
   createEVMContext,
   EVM_CONTEXT,
 } from "soon-birdge-tool/src/helper/evm_context";
-import {
-  Numberu128,
-  Numberu64,
-} from "soon-birdge-tool/src/helper/number.utils";
 import {
   BridgeInstructionIndex,
   createSVMContext,
@@ -20,7 +18,6 @@ import {
   sendTransaction,
   SYSTEM_PROGRAM,
 } from "soon-birdge-tool/src/helper/svm_context";
-import { ethers } from "ethers";
 import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
@@ -28,26 +25,33 @@ import {
   LAMPORTS_PER_SOL,
   Keypair,
 } from "@solana/web3.js";
-import axios from "axios";
-import bs58 from "bs58";
-
 import {
+  Numberu128,
+  Numberu64,
+} from "soon-birdge-tool/src/helper/number.utils";
+import { ethers } from "ethers";
+import {
+  base58PublicKeyToHex,
   isValidEthereumAddress,
   parseWithdrawTxInfo,
   sleep,
 } from "soon-birdge-tool/src/helper/tool";
 import { spamL2Tx } from "./helper/spam-utils";
+import axios from "axios";
+import bs58 from "bs58";
 
-const gasLimit = 1000000;
+const gasLimit = 100000;
+const tenthETH: bigint = 100_000_000_000_000_000n;
 const oneSol = LAMPORTS_PER_SOL;
 
-describe("test withdraw", () => {
+describe("test deposit and withdraw", () => {
   let EVMContext: EVM_CONTEXT;
   let SVMContext: SVM_CONTEXT;
+  let L1Bridge: L1StandardBridge;
+  let svmAccount: Keypair;
   let withdrawTxKey: PublicKey;
   let withdrawalSignature: string;
   let withdrawHeight: number;
-  let svmAccount: Keypair;
 
   beforeAll(async function () {
     svmAccount = Keypair.generate();
@@ -56,31 +60,68 @@ describe("test withdraw", () => {
 
     EVMContext = await createEVMContext();
     SVMContext = await createSVMContext();
-
-    // Optimism Portal address
-    const l1BridgeAddress = process.env.SOON_NODE_DEPOSIT_CONTRACT;
-
-    if (l1BridgeAddress) {
-      await EVMContext.EVM_USER.sendTransaction({
-        to: l1BridgeAddress,
-        value: ethers.utils.parseEther("1"),
-        gasLimit: 100000,
-      });
-    } else {
-      expect(l1BridgeAddress).toBeTruthy();
-    }
+    L1Bridge = L1StandardBridge__factory.connect(
+      EVMContext.EVM_STANDARD_BRIDGE,
+      EVMContext.EVM_USER,
+    );
 
     // init account space on SOON.
     const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
       SVMContext.SVM_USER.publicKey,
     );
-    if (!accountInfo || accountInfo.lamports < 2 * oneSol) {
+    if (!accountInfo) {
       await SVMContext.SVM_Connection.requestAirdrop(
         SVMContext.SVM_USER.publicKey,
         oneSol * 2,
       );
     }
     await sleep(100);
+  });
+
+  it.sequential("deposit", async function () {
+    const startingBalance = await EVMContext.EVM_USER.getBalance();
+    const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
+      SVMContext.SVM_USER.publicKey,
+    );
+    expect(accountInfo).not.toBeNull();
+    const startingSol = accountInfo?.lamports ?? 0;
+
+    const receipt = await (
+      await L1Bridge.bridgeETHTo(
+        base58PublicKeyToHex(SVMContext.SVM_USER.publicKey.toBase58()),
+        gasLimit,
+        "0x",
+        {
+          value: tenthETH,
+          gasLimit: 1000000,
+        },
+      )
+    ).wait(1);
+
+    console.log(`Deposit ETH success. txHash: ${receipt.transactionHash}`);
+
+    const endBalance = await EVMContext.EVM_PROVIDER.getBalance(
+      EVMContext.EVM_USER.address,
+    );
+    // check that balances on L1 match
+    expect(
+      startingBalance
+        .sub(tenthETH)
+        .sub(receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice)),
+    ).toEqual(endBalance);
+
+    // wait sequencer to track.
+    await sleep(1000);
+
+    // check balance on SOON
+    const endingAccount = await SVMContext.SVM_Connection.getAccountInfo(
+      SVMContext.SVM_USER.publicKey,
+    );
+    expect(endingAccount).not.toBeNull();
+    const endSol = endingAccount?.lamports;
+
+    console.log(`start: ${startingSol}, end: ${endSol}`);
+    expect(startingSol + oneSol * 0.1).toEqual(endSol);
   });
 
   // sequential test for each step of withdraw process
