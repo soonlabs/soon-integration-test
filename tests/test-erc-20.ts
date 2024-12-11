@@ -256,7 +256,7 @@ describe("test erc-20", () => {
     expect(startingBalance - halfERC).toEqual(endingBalance);
   });
 
-  it.sequential("propose withdraw erc-20", async function () {
+  it.sequential("prove withdraw erc-20", async function () {
     // 1. fast forward l2, let proposer propose withdraw root.
     // 2. check proposer height larger than withdraw height.
     // 3. generate proof and verify.
@@ -342,6 +342,48 @@ describe("test erc-20", () => {
     console.log(
       `Withdraw tx prove success. txHash: ${receipt.transactionHash}`,
     );
+  });
+
+  it.sequential("finalize withdraw erc-20", async function () {
+    const startingBalance = await ERC20Contract.balanceOf(
+      EVMContext.EVM_USER.address,
+    );
+    const withdrawInfo = await SVMContext.SVM_Connection.getAccountInfo(
+      new PublicKey(withdrawTxKey),
+    );
+    if (!withdrawInfo || withdrawInfo.data.length < 148) {
+      throw new Error("invalid withdraw Id.");
+    }
+    //get withdraw tx
+    const withdrawTx = parseWithdrawTxInfo(withdrawInfo.data);
+    console.log(withdrawTx);
+
+    const OptimismPortal = OptimismPortal__factory.connect(
+      EVMContext.EVM_OP_PORTAL,
+      EVMContext.EVM_USER,
+    );
+
+    // must wait for finalization period
+    await sleep(3000);
+
+    const receipt = await (
+      await OptimismPortal.connect(
+        EVMContext.EVM_USER,
+      ).finalizeWithdrawalTransaction(withdrawTx, {
+        gasLimit: 10000000,
+      })
+    ).wait(1);
+    console.log(
+      `Finalize withdraw success. txHash: ${receipt.transactionHash}`,
+    );
+
+    const endingBalance = await ERC20Contract.balanceOf(
+      EVMContext.EVM_USER.address,
+    );
+    console.log(`start eth: ${startingBalance}, end eth: ${endingBalance}`);
+
+    // check erc-20 balances on L1 match
+    expect(startingBalance.add(halfERC)).toEqual(endingBalance);
   });
 });
 

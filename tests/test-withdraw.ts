@@ -38,7 +38,7 @@ import {
 } from "soon-birdge-tool/src/helper/tool";
 import { spamL2Tx } from "./helper/spam-utils";
 
-const gasLimit = 100000;
+const gasLimit = 1000000;
 const oneSol = LAMPORTS_PER_SOL;
 
 describe("test withdraw", () => {
@@ -56,6 +56,19 @@ describe("test withdraw", () => {
 
     EVMContext = await createEVMContext();
     SVMContext = await createSVMContext();
+
+    // Optimism Portal address
+    const l1BridgeAddress = process.env.SOON_NODE_DEPOSIT_CONTRACT;
+
+    if (l1BridgeAddress) {
+      await EVMContext.EVM_USER.sendTransaction({
+        to: l1BridgeAddress,
+        value: ethers.utils.parseEther("1"),
+        gasLimit: 100000,
+      });
+    } else {
+      expect(l1BridgeAddress).toBeTruthy();
+    }
 
     // init account space on SOON.
     const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
@@ -117,7 +130,7 @@ describe("test withdraw", () => {
     );
     console.log(`bridgeConfigKey key: ${bridgeConfigKey.toString()}`);
 
-    let withdrawalAmount = oneSol * 0.5;
+    const withdrawalAmount = oneSol * 0.5;
 
     const instructionIndex = Buffer.from(
       Int8Array.from([BridgeInstructionIndex.WithdrawETH]),
@@ -164,9 +177,9 @@ describe("test withdraw", () => {
         (acc) => acc.pubkey.toString() === withdrawTxKey.toString(),
       ) ?? -1;
     expect(newWithdrawalAccountIndex).toBeGreaterThanOrEqual(0);
-    let after = txInfo?.meta?.postBalances?.[newWithdrawalAccountIndex] ?? 0;
-    let before = txInfo?.meta?.preBalances?.[newWithdrawalAccountIndex] ?? 0;
-    let rentPaid = after - before;
+    const after = txInfo?.meta?.postBalances?.[newWithdrawalAccountIndex] ?? 0;
+    const before = txInfo?.meta?.preBalances?.[newWithdrawalAccountIndex] ?? 0;
+    const rentPaid = after - before;
 
     console.log(`newWithdrawalAccountIndex: ${newWithdrawalAccountIndex}`);
     console.log(`after: ${after}`);
@@ -187,7 +200,7 @@ describe("test withdraw", () => {
     console.log(`start SOL: ${startingSol} ending SOL: ${endingSol}`);
   });
 
-  it.sequential("propose withdrawal: ", async function () {
+  it.sequential("prove withdrawal: ", async function () {
     // 1. fast forward l2, let proposer propose withdraw root.
     // 2. check proposer height larger than withdraw height.
     // 3. generate proof and verify.
@@ -265,7 +278,7 @@ describe("test withdraw", () => {
         },
         response1.data.result.withdrawalProof,
         {
-          gasLimit: 1000000,
+          gasLimit: 10000000,
         },
       )
     ).wait(1);
@@ -273,5 +286,47 @@ describe("test withdraw", () => {
     console.log(
       `Withdraw tx prove success. txHash: ${receipt.transactionHash}`,
     );
+  });
+
+  it.sequential("finalize withdraw", async function () {
+    const startingBalance = await EVMContext.EVM_USER.getBalance();
+    const withdrawInfo = await SVMContext.SVM_Connection.getAccountInfo(
+      new PublicKey(withdrawTxKey),
+    );
+    if (!withdrawInfo || withdrawInfo.data.length < 148) {
+      throw new Error("invalid withdraw Id.");
+    }
+    //get withdraw tx
+    const withdrawTx = parseWithdrawTxInfo(withdrawInfo.data);
+    console.log(withdrawTx);
+
+    const OptimismPortal = OptimismPortal__factory.connect(
+      EVMContext.EVM_OP_PORTAL,
+      EVMContext.EVM_USER,
+    );
+
+    // must wait for finalization period
+    await sleep(3000);
+
+    const receipt = await (
+      await OptimismPortal.connect(
+        EVMContext.EVM_USER,
+      ).finalizeWithdrawalTransaction(withdrawTx, {
+        gasLimit: 10000000,
+      })
+    ).wait(1);
+    console.log(
+      `Finalize withdraw success. txHash: ${receipt.transactionHash}`,
+    );
+
+    const endingBalance = await EVMContext.EVM_USER.getBalance();
+    console.log(`start eth: ${startingBalance}, end eth: ${endingBalance}`);
+
+    // check that balances on L1 match
+    expect(
+      startingBalance.sub(
+        receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice),
+      ),
+    ).toEqual(endingBalance);
   });
 });
