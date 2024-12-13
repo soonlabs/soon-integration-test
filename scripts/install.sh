@@ -7,6 +7,13 @@ sudo apt remove cmdtest
 
 sudo apt update && sudo apt -y install yarn
 
+sudo apt-get install -y \
+    build-essential \
+    pkg-config \
+    libudev-dev llvm libclang-dev \
+    protobuf-compiler libssl-dev \
+    clang make curl git \
+
 # install rust toochain
 if command -v rustc >/dev/null 2>&1; then
     echo "Installed Rust detected."
@@ -17,22 +24,14 @@ else
     echo "Rust installed."
 fi
 
-sudo apt-get install -y \
-    build-essential \
-    pkg-config \
-    libudev-dev llvm libclang-dev \
-    protobuf-compiler libssl-dev \
-    clang make\
-
 sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
 
 export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
 
 # install anvil
 curl -L https://foundry.paradigm.xyz | bash
-source $HOME/.bashrc
+# hack for ubuntu and other distros (source causes short-circuit)
+eval "$(cat $HOME/.bashrc | tail -n +10)"
 foundryup
 
-# source env variable to build
-source ./build/.envrc.example
 export SOON_PATH=../soon
