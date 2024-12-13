@@ -7,3 +7,4 @@ yarn.lock
 deployments
 contracts/cache
 contracts/out
+bin/

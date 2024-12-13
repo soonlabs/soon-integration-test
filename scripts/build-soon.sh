@@ -2,6 +2,12 @@
 
 set -e
 
+CURRENT_PATH=$(pwd)
+OS=$(uname -s)
+ARCH=$(uname -m)
+
+export SOON_PATH=../soon
+
 function build_soon() {
 	cd $SOON_PATH
 	if [[ "$OS" == "Linux" && "$ARCH" == "x86_64" ]]; then
@@ -27,3 +33,8 @@ echo "== Building phase..."
 install
 build_soon
 echo "== Build done!"
+
+mkdir bin
+cp $SOON_PATH/target/release/soon-node ./bin
+cp $SOON_PATH/target/release/proposer ./bin
+cp $SOON_PATH/target/release/batcher ./bin

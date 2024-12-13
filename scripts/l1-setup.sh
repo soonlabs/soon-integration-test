@@ -4,7 +4,10 @@
 yarn --cwd ./soon-bridge-tool/
 
 #start anvil
-&> /dev/null anvil --host 0.0.0.0 --block-time 3 --mixed-mining --slots-in-an-epoch 1 &
+&> /dev/null anvil --block-time 3 --mixed-mining --slots-in-an-epoch 1 &
+
+export L1_RPC_URL="http://127.0.0.1:8545"
+export SOON_PATH=../soon
 
 # Wait for Anvil to be ready
 echo "Waiting for Anvil to be ready..."
@@ -36,7 +39,6 @@ mkdir -p $WORKDIR/deployments
 
 # export default env variables
 export GS_ADMIN_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-export L1_RPC_URL="http://127.0.0.1:8545"
 
 # Deploy contracts using local config
 # forge restrict only visit files in current directory

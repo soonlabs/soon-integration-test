@@ -33,5 +33,3 @@ curl -L https://foundry.paradigm.xyz | bash
 # hack for ubuntu and other distros (source causes short-circuit)
 eval "$(cat $HOME/.bashrc | tail -n +10)"
 foundryup
-
-export SOON_PATH=../soon
