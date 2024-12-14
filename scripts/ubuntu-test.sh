@@ -2,8 +2,8 @@
 
 CURRENT_PATH=$(pwd)
 
-#${CURRENT_PATH}/scripts/install.sh
-#${CURRENT_PATH}/scripts/build-soon.sh
+${CURRENT_PATH}/scripts/install.sh
+${CURRENT_PATH}/scripts/build-soon.sh
 ${CURRENT_PATH}/scripts/l1-setup.sh
 ${CURRENT_PATH}/scripts/soon-setup.sh
 
