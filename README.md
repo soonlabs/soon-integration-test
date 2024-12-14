@@ -31,7 +31,7 @@ make build
 After setup you can run script to setup local docker network of L1, soon node, soon proposer
 
 ```sh
-./l1-setup.sh`
+./scripts/docker-l1-setup.sh
 ```
 
 ## Run Tests
@@ -41,6 +41,15 @@ With docker network up and running in another terminal run tests with command be
 ```sh
 yarn && yarn tests
 ```
+
+## Ubuntu test
+
+script to install dependencies, setup and run tests. Note you will prompted for sudo password for installs. However script will not work if you run it as root user
+
+```sh
+./scripts/ubuntu-test.sh
+```
+
 
 ## Important config
 
