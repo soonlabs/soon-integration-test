@@ -25,14 +25,12 @@ build:
 .PHONY: build
 
 genesis:
-	$(SOON_PATH)/target/release/soon-genesis \
+	RUST_LOG=info $(SOON_PATH)/target/release/soon-genesis \
 		-t ./.soon \
 		-p $(SOON_PATH)/node/programs/target/deploy \
 		--faucet-lamports 100000000000000000 \
 		--l1-cross-domain-messenger $(L1_CROSS_DOMAIN_PROXY) \
 		--l1-standard-bridge $(L1_STANDARD_BRIDGE_PROXY) \
+		--l1-rpc-url $(L1_RPC_URL) \
+		--download-cache-path ~/.cache/solana-spl \
 		$(ARGS)
-
-set-env:
-	./set-env.sh
-.PHONY: set-env
