@@ -1,6 +1,8 @@
 #/bin/bash
 
 CURRENT_PATH=$(pwd)
+# set path to solana binaries
+export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
 
 ${CURRENT_PATH}/scripts/install.sh
 ${CURRENT_PATH}/scripts/build-soon.sh
@@ -16,4 +18,3 @@ pgrep -io "anvil" | xargs kill
 pgrep -io "soon-node" | xargs kill
 pgrep -io "proposer" | xargs kill
 pgrep -io "batcher" | xargs kill -KILL
-
