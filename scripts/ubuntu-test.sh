@@ -57,6 +57,8 @@ export EVM_PROVIDER_URL="http://127.0.0.1:8545"
 export EVM_STANDARD_BRIDGE=$L1_STANDARD_BRIDGE_PROXY
 export SVM_CONNECTION_URL="http://127.0.0.1:8899"
 export SVM_SOON_RPC_URL="http://127.0.0.1:8899"
+export SOON_NODE_RPC_BIND_ADDRESS="127.0.0.1"
+export SOON_NODE_BIND_ADDRESS="127.0.0.1"
 
 sleep 3
 
@@ -73,6 +75,6 @@ yarn test
 
 # kill processes
 pgrep -io "anvil" | xargs kill
-pgrep -io "soon-node" | xargs kill
+pgrep -io "soon-node" | xargs kill -KILL
 pgrep -io "proposer" | xargs kill
 pgrep -io "batcher" | xargs kill -KILL
