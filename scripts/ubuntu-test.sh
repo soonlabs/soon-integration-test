@@ -61,6 +61,8 @@ SVM_FAUCET_ACCOUNT=$(cat ./.soon/keypair/faucet.json);
 export SVM_DEPOSITOR_KEY=${SVM_FAUCET_ACCOUNT}
 export SVM_USER_KEY=${SVM_FAUCET_ACCOUNT}
 
+sleep 3
+
 ${CURRENT_PATH}/scripts/soon-setup.sh
 
 sleep 3
