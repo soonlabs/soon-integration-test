@@ -1,18 +1,18 @@
 #!/bin/bash
 
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-
-sudo apt remove cmdtest
-
-sudo apt update && sudo apt -y install yarn
-
 sudo apt-get install -y \
     build-essential \
     pkg-config \
     libudev-dev llvm libclang-dev \
     protobuf-compiler libssl-dev \
     clang make curl git \
+
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+
+sudo apt remove cmdtest
+
+sudo apt update && sudo apt -y install yarn
 
 # install rust toochain
 if command -v rustc >/dev/null 2>&1; then
