@@ -6,7 +6,9 @@ CURRENT_PATH=$(pwd)
 OS=$(uname -s)
 ARCH=$(uname -m)
 
-export SOON_PATH=../soon
+if [[ -z "${SOON_PATH}" ]]; then
+    export SOON_PATH=../soon
+fi
 
 function build_soon() {
 	cd $SOON_PATH

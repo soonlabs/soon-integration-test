@@ -1,6 +1,9 @@
 #!/bin/bash
 
-export SOON_PATH=../soon
+if [[ -z "${SOON_PATH}" ]]; then
+    export SOON_PATH=../soon
+fi
+
 # set some env variables
 export SOON_NODE_STORAGE_PATH=./.soon
 export SOON_NODE_L1_RPC_URL=http://localhost:8545

@@ -7,7 +7,10 @@ yarn --cwd ./soon-bridge-tool/
 &> /dev/null anvil --block-time 3 --mixed-mining --slots-in-an-epoch 1 &
 
 export L1_RPC_URL="http://127.0.0.1:8545"
-export SOON_PATH=../soon
+
+if [[ -z "${SOON_PATH}" ]]; then
+    export SOON_PATH=../soon
+fi
 
 # Wait for Anvil to be ready
 echo "Waiting for Anvil to be ready..."

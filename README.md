@@ -44,10 +44,10 @@ yarn && yarn tests
 
 ## Ubuntu test
 
-script to install dependencies, setup and run tests. Note you will prompted for sudo password for installs. However script will not work if you run it as root user
+script to install dependencies, setup and run tests. Note you will prompted for sudo password for installs. However script will not work if you run it as root user. (SOON_PATH defaults to ../soon)
 
 ```sh
-./scripts/ubuntu-test.sh
+SOON_PATH=../soon ./scripts/ubuntu-test.sh
 ```
 
 
