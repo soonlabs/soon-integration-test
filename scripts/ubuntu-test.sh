@@ -7,12 +7,13 @@ if [[ -z "${SOON_PATH}" ]]; then
 fi
 
 if [[ -z "${DEPLOYMENT_PATH}" ]]; then
-    export DEPLOYMENT_PATH=$SOON_PATH/contracts/deployments/31337-deploy.json
+    export DEPLOYMENT_PATH=${CURRENT_PATH}/deployments/it-deploy.json
 fi
 
 # set some env variables
 export SOON_NODE_STORAGE_PATH=./.soon
 export SOON_NODE_L1_RPC_URL=http://localhost:8545
+export L1ChainID=31337
 export SOON_NODE_ENABLE_DA=false
 export SOON_NODE_DEV_MODE=false
 export SOON_NODE_ENABLE_FAUCET=true
@@ -57,15 +58,15 @@ export EVM_STANDARD_BRIDGE=$L1_STANDARD_BRIDGE_PROXY
 export SVM_CONNECTION_URL="http://127.0.0.1:8899"
 export SVM_SOON_RPC_URL="http://127.0.0.1:8899"
 
-SVM_FAUCET_ACCOUNT=$(cat ./.soon/keypair/faucet.json);
-export SVM_DEPOSITOR_KEY=${SVM_FAUCET_ACCOUNT}
-export SVM_USER_KEY=${SVM_FAUCET_ACCOUNT}
-
 sleep 3
 
 ${CURRENT_PATH}/scripts/soon-setup.sh
 
 sleep 3
+
+SVM_FAUCET_ACCOUNT=$(cat ./.soon/keypair/faucet.json);
+export SVM_DEPOSITOR_KEY=${SVM_FAUCET_ACCOUNT}
+export SVM_USER_KEY=${SVM_FAUCET_ACCOUNT}
 
 yarn
 yarn test
