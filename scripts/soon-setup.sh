@@ -5,7 +5,7 @@ if [[ -z "${SOON_PATH}" ]]; then
 fi
 
 if [[ -z "${DEPLOYMENT_PATH}" ]]; then
-    export DEPLOYMENT_PATH=./deployments/it-deploy.json
+    export DEPLOYMENT_PATH=$SOON_PATH/contracts/deployments/31337-deploy.json
 fi
 
 # set some env variables
