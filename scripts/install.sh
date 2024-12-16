@@ -32,4 +32,5 @@ export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
 curl -L https://foundry.paradigm.xyz | bash
 # hack for ubuntu and other distros (source causes short-circuit)
 eval "$(cat $HOME/.bashrc | tail -n +10)"
+source $HOME/.bashrc
 foundryup
