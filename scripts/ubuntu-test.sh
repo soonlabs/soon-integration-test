@@ -6,8 +6,14 @@ if [[ -z "${SOON_PATH}" ]]; then
     export SOON_PATH=../soon
 fi
 
+# Check if SOON_PATH submodule is properly initialized
+if [[ ! -f "${SOON_PATH}/.git/config" ]] || ! grep -q "\[submodule\]" "${SOON_PATH}/.git/config"; then
+    echo "SOON_PATH submodule not properly initialized. Initializing now..."
+    (cd "${SOON_PATH}" && git submodule update --init --recursive)
+fi
+
 # Check submodules
-if [[ ! -f "${CURRENT_PATH}/.git/modules/contracts/lib/forge-std/config" ]]; then
+if [[ ! -f "${CURRENT_PATH}/.git/config" ]] || ! grep -q "\[submodule\]" "${CURRENT_PATH}/.git/config"; then
     echo "Submodules not initialized. Initializing now..."
     git submodule update --init --recursive
 fi
@@ -53,13 +59,11 @@ ${CURRENT_PATH}/scripts/l1-setup.sh
 
 # get env variables from deployment file
 # map the .env variables to it-deploy.json file generated from foundry
-declare -A env_var=( ["L2OO_ADDRESS"]="L2OutputOracleProxy" ["L1_STANDARD_BRIDGE_PROXY"]="L1StandardBridgeProxy" ["SYSTEM_CONFIG_PROXY"]="SystemConfigProxy" ["L1_CROSS_DOMAIN_PROXY"]="L1CrossDomainMessengerProxy" ["OPTIMISM_PORTAL_PROXY"]="OptimismPortalProxy")
+declare -A env_var=(["L2OO_ADDRESS"]="L2OutputOracleProxy" ["L1_STANDARD_BRIDGE_PROXY"]="L1StandardBridgeProxy" ["SYSTEM_CONFIG_PROXY"]="SystemConfigProxy" ["L1_CROSS_DOMAIN_PROXY"]="L1CrossDomainMessengerProxy" ["OPTIMISM_PORTAL_PROXY"]="OptimismPortalProxy")
 
-for key in "${!env_var[@]}";
-
-do
-    VAR="${env_var[$key]}";
-    ADDRESS=$(jq -r ".${VAR}" $DEPLOYMENT_PATH);
+for key in "${!env_var[@]}"; do
+    VAR="${env_var[$key]}"
+    ADDRESS=$(jq -r ".${VAR}" $DEPLOYMENT_PATH)
     export $key=${ADDRESS}
 done
 
@@ -82,7 +86,7 @@ ${CURRENT_PATH}/scripts/soon-setup.sh
 
 sleep 3
 
-SVM_FAUCET_ACCOUNT=$(cat ./.soon/keypair/faucet.json);
+SVM_FAUCET_ACCOUNT=$(cat ./.soon/keypair/faucet.json)
 export SVM_DEPOSITOR_KEY=${SVM_FAUCET_ACCOUNT}
 export SVM_USER_KEY=${SVM_FAUCET_ACCOUNT}
 
