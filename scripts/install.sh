@@ -24,13 +24,23 @@ else
     echo "Rust installed."
 fi
 
-sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
+# Install anza tool if not present
+if ! command -v solana >/dev/null 2>&1; then
+    echo "Installing anza tool..."
+    sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
+    export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+else
+    echo "Anza tool already installed."
+fi
 
-export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
-
-# install anvil
-curl -L https://foundry.paradigm.xyz | bash
-# hack for ubuntu and other distros (source causes short-circuit)
-eval "$(cat $HOME/.bashrc | tail -n +10)"
-source $HOME/.bashrc
-foundryup
+# Install foundry/anvil if not present
+if ! command -v anvil >/dev/null 2>&1; then
+    echo "Installing foundry..."
+    curl -L https://foundry.paradigm.xyz | bash
+    # hack for ubuntu and other distros (source causes short-circuit)
+    eval "$(cat $HOME/.bashrc | tail -n +10)"
+    source $HOME/.bashrc
+    foundryup
+else
+    echo "Foundry already installed."
+fi
