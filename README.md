@@ -1,6 +1,6 @@
 ## Submodules
 
-When first cloning repo, run below command to recursively clone into all the submodules:
+When first cloning repo, run below command to recursively clone into all the submodules(both this repo and soon repo):
 
 ```sh
 git submodule update --init --recursive

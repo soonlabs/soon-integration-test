@@ -7,6 +7,24 @@ sudo apt-get install -y \
     protobuf-compiler libssl-dev \
     clang make curl git \
 
+# Check and install Node.js if not present
+if ! command -v node >/dev/null 2>&1; then
+    echo "Installing Node.js..."
+    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+else
+    echo "Node.js is already installed."
+fi
+
+# Check Node.js version meets minimum requirement
+NODE_VERSION=$(node -v | cut -d'v' -f2)
+if [ $(echo "$NODE_VERSION 4.0" | awk '{print ($1 < $2)}') -eq 1 ]; then
+    echo "Upgrading Node.js as version is below 4.0..."
+    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+fi
+
+
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 
