@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ -z "${SOON_PATH}" ]]; then
+if [[ -n "${SOON_PATH}" ]]; then
   rm -rf ${SOON_NODE_STORAGE_PATH}
 fi
 

@@ -4,15 +4,15 @@ import {
   L1StandardBridge__factory,
   OptimismPortal__factory,
   L2OutputOracle__factory,
-} from "soon-birdge-tool/typechain-types";
+} from "soon-bridge-tool/typechain-types";
 import {
   Numberu128,
   Numberu64,
-} from "soon-birdge-tool/src/helper/number.utils";
+} from "soon-bridge-tool/src/helper/number.utils";
 import {
   createEVMContext,
   EVM_CONTEXT,
-} from "soon-birdge-tool/src/helper/evm_context";
+} from "soon-bridge-tool/src/helper/evm_context";
 import {
   BridgeInstructionIndex,
   createSVMContext,
@@ -21,14 +21,14 @@ import {
   SYSTEM_PROGRAM,
   DEFAULT_BRIDGE_PROGRAM,
   genProgramDataAccountKey,
-} from "soon-birdge-tool/src/helper/svm_context";
+} from "soon-bridge-tool/src/helper/svm_context";
 import { ethers } from "ethers";
 import {
   base58PublicKeyToHex,
   sleep,
   isValidEthereumAddress,
   parseWithdrawTxInfo,
-} from "soon-birdge-tool/src/helper/tool";
+} from "soon-bridge-tool/src/helper/tool";
 import {
   Keypair,
   LAMPORTS_PER_SOL,

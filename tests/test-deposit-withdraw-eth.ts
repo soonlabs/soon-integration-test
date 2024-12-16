@@ -4,11 +4,11 @@ import {
   L1StandardBridge__factory,
   OptimismPortal__factory,
   L2OutputOracle__factory,
-} from "soon-birdge-tool/typechain-types";
+} from "soon-bridge-tool/typechain-types";
 import {
   createEVMContext,
   EVM_CONTEXT,
-} from "soon-birdge-tool/src/helper/evm_context";
+} from "soon-bridge-tool/src/helper/evm_context";
 import {
   BridgeInstructionIndex,
   createSVMContext,
@@ -17,7 +17,7 @@ import {
   genProgramDataAccountKey,
   sendTransaction,
   SYSTEM_PROGRAM,
-} from "soon-birdge-tool/src/helper/svm_context";
+} from "soon-bridge-tool/src/helper/svm_context";
 import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
@@ -28,14 +28,14 @@ import {
 import {
   Numberu128,
   Numberu64,
-} from "soon-birdge-tool/src/helper/number.utils";
+} from "soon-bridge-tool/src/helper/number.utils";
 import { ethers } from "ethers";
 import {
   base58PublicKeyToHex,
   isValidEthereumAddress,
   parseWithdrawTxInfo,
   sleep,
-} from "soon-birdge-tool/src/helper/tool";
+} from "soon-bridge-tool/src/helper/tool";
 import { spamL2Tx } from "./helper/spam-utils";
 import axios from "axios";
 import bs58 from "bs58";

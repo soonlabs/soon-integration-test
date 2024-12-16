@@ -14,7 +14,7 @@
     "axios": "^1.7.9",
     "bs58": "^6.0.0",
     "ethers": "^5.7.2",
-    "soon-birdge-tool": "file:./soon-bridge-tool/",
+    "soon-bridge-tool": "file:./soon-bridge-tool/",
     "vitest": "^2.1.6"
   },
   "devDependencies": {
