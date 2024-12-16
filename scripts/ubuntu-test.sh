@@ -91,6 +91,7 @@ export SVM_DEPOSITOR_KEY=${SVM_FAUCET_ACCOUNT}
 export SVM_USER_KEY=${SVM_FAUCET_ACCOUNT}
 
 yarn
+npm install
 yarn test
 
 # kill processes
