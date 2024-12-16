@@ -1,6 +1,12 @@
-#/bin/bash
+#!/bin/bash
 
 CURRENT_PATH=$(pwd)
+
+# Check submodules
+if [[ ! -f "${CURRENT_PATH}/.git/modules/contracts/lib/forge-std/config" ]]; then
+    echo "Submodules not initialized. Initializing now..."
+    git submodule update --init --recursive
+fi
 
 if [[ -z "${SOON_PATH}" ]]; then
     export SOON_PATH=../soon
