@@ -79,6 +79,8 @@ export SVM_SOON_RPC_URL="http://127.0.0.1:8899"
 export SOON_NODE_RPC_BIND_ADDRESS="127.0.0.1"
 export SOON_NODE_BIND_ADDRESS="127.0.0.1"
 export SOON_NODE_FULL_RPC_API="true"
+export SOON_NODE_ENABLE_FAUCET="true"
+export SOON_NODE_ENABLE_PRODUCER="true"
 
 sleep 3
 
@@ -91,7 +93,6 @@ export SVM_DEPOSITOR_KEY=${SVM_FAUCET_ACCOUNT}
 export SVM_USER_KEY=${SVM_FAUCET_ACCOUNT}
 
 yarn
-npm install
 yarn test
 
 # kill processes
