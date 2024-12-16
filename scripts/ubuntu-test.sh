@@ -59,6 +59,7 @@ export SVM_CONNECTION_URL="http://127.0.0.1:8899"
 export SVM_SOON_RPC_URL="http://127.0.0.1:8899"
 export SOON_NODE_RPC_BIND_ADDRESS="127.0.0.1"
 export SOON_NODE_BIND_ADDRESS="127.0.0.1"
+export SOON_NODE_FULL_RPC_API="true"
 
 sleep 3
 
