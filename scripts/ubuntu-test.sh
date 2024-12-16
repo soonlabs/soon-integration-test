@@ -2,14 +2,23 @@
 
 CURRENT_PATH=$(pwd)
 
+if [[ -z "${SOON_PATH}" ]]; then
+    export SOON_PATH=../soon
+fi
+
 # Check submodules
 if [[ ! -f "${CURRENT_PATH}/.git/modules/contracts/lib/forge-std/config" ]]; then
     echo "Submodules not initialized. Initializing now..."
     git submodule update --init --recursive
 fi
 
-if [[ -z "${SOON_PATH}" ]]; then
-    export SOON_PATH=../soon
+# Handle branch switching
+if [[ -n "${SOON_BRANCH}" ]]; then
+    echo "Switching to specified branch ${SOON_BRANCH}..."
+    (cd "${SOON_PATH}" && git checkout "${SOON_BRANCH}")
+else
+    echo "No branch specified, switching to origin/main..."
+    (cd "${SOON_PATH}" && git checkout origin/main)
 fi
 
 if [[ -z "${DEPLOYMENT_PATH}" ]]; then
