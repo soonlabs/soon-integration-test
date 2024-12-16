@@ -1,7 +1,7 @@
 import { Keypair } from "@solana/web3.js";
-import { EVM_CONTEXT } from "soon-birdge-tool/src/helper/evm_context";
-import { SVM_CONTEXT } from "soon-birdge-tool/src/helper/svm_context";
-import { sleep } from "soon-birdge-tool/src/helper/tool";
+import { EVM_CONTEXT } from "soon-bridge-tool/src/helper/evm_context";
+import { SVM_CONTEXT } from "soon-bridge-tool/src/helper/svm_context";
+import { sleep } from "soon-bridge-tool/src/helper/tool";
 import { ethers } from "ethers";
 
 export async function spamL2Tx(svmContext: SVM_CONTEXT, loopNum: number) {
