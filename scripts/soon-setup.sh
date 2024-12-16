@@ -1,7 +1,11 @@
 #!/bin/bash
 
+if [[ -z "${SOON_PATH}" ]]; then
+  rm -rf ${SOON_NODE_STORAGE_PATH}
+fi
+
 make genesis
-&> /dev/null ./bin/soon-node &
+./bin/soon-node &>/dev/null &
 sleep 3
-&> /dev/null ./bin/proposer &
-&> /dev/null ./bin/batcher &
+./bin/proposer &>/dev/null &
+./bin/batcher &>/dev/null &
