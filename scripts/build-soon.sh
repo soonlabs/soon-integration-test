@@ -36,7 +36,8 @@ install
 build_soon
 echo "== Build done!"
 
-mkdir bin
+rm -rf bin
+mkdir -p bin
 cp $SOON_PATH/target/release/soon-node ./bin
 cp $SOON_PATH/target/release/proposer ./bin
 cp $SOON_PATH/target/release/batcher ./bin
