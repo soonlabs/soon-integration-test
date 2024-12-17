@@ -89,8 +89,10 @@ ${CURRENT_PATH}/scripts/soon-setup.sh
 sleep 3
 
 SVM_FAUCET_ACCOUNT=$(cat ./.soon/keypair/faucet.json)
+SVM_UPGRADER_ACCOUNT=$(cat ./.soon/keypair/upgrader.json)
 export SVM_DEPOSITOR_KEY=${SVM_FAUCET_ACCOUNT}
 export SVM_USER_KEY=${SVM_FAUCET_ACCOUNT}
+export SVM_BRIDGE_ADMIN_KEYPAIR=${SVM_UPGRADER_ACCOUNT}
 
 yarn
 yarn test

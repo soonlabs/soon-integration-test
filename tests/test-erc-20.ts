@@ -85,6 +85,12 @@ describe("test erc-20", () => {
       );
     }
 
+    // init bridge admin
+    await SVMContext.SVM_Connection.requestAirdrop(
+      SVMContext.SVM_BRIDGE_ADMIN.publicKey,
+      oneSol,
+    );
+
     const tokenContractFactory = new TestERC20__factory(EVMContext.EVM_USER);
     ERC20Contract = await tokenContractFactory.deploy();
 
@@ -406,6 +412,18 @@ async function createSpl(
   );
   console.log(`splTokenMintKey: ${splTokenMintKey.toString()}`);
 
+  const [vaultKey] = PublicKey.findProgramAddressSync(
+    [Buffer.from("vault")],
+    context.SVM_BRIDGE_PROGRAM_ID,
+  );
+  console.log(`vaultKey key: ${vaultKey.toString()}`);
+
+  const [bridgeOwnerKey] = PublicKey.findProgramAddressSync(
+    [Buffer.from("bridge-owner")],
+    context.SVM_BRIDGE_PROGRAM_ID,
+  );
+  console.log(`bridgeOwnerKey: ${bridgeOwnerKey.toString()}`);
+
   const instructionIndex = Buffer.from(
     Int8Array.from([BridgeInstructionIndex.CreateSPL]),
   );
@@ -423,10 +441,12 @@ async function createSpl(
       { pubkey: SYSTEM_PROGRAM, isSigner: false, isWritable: false },
       { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
-      { pubkey: splTokenOwnerKey, isSigner: false, isWritable: true },
+      { pubkey: splTokenOwnerKey, isSigner: false, isWritable: false },
       { pubkey: splTokenMintKey, isSigner: false, isWritable: true },
+      { pubkey: vaultKey, isSigner: false, isWritable: true },
+      { pubkey: bridgeOwnerKey, isSigner: false, isWritable: false },
       {
-        pubkey: context.SVM_USER.publicKey,
+        pubkey: context.SVM_BRIDGE_ADMIN.publicKey,
         isSigner: true,
         isWritable: false,
       },
@@ -434,7 +454,7 @@ async function createSpl(
     programId: context.SVM_BRIDGE_PROGRAM_ID,
   });
 
-  await sendTransaction(context, [instruction]);
+  await sendTransaction(context, [instruction], context.SVM_BRIDGE_ADMIN);
 
   console.log(`l2Token: ${splTokenMintKey.toBase58()}`);
   return splTokenMintKey;

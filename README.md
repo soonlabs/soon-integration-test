@@ -50,7 +50,6 @@ script to install dependencies, setup and run tests. Note you will prompted for 
 SOON_PATH=../soon ./scripts/ubuntu-test.sh
 ```
 
-
 ## Important config
 
 ### l1_deploy_config.json
