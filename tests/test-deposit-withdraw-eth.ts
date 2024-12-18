@@ -44,6 +44,7 @@ const gasLimit = 100000;
 const tenthETH: bigint = 100_000_000_000_000_000n;
 const oneSol = LAMPORTS_PER_SOL;
 const zeroBuffer: Buffer = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]);
+const createCounterIndex = 9;
 
 describe("test deposit and withdraw", () => {
   let EVMContext: EVM_CONTEXT;
@@ -135,7 +136,10 @@ describe("test deposit and withdraw", () => {
     );
 
     const [counterKey] = PublicKey.findProgramAddressSync(
-      [Buffer.from("svm-withdraw-counter"), SVMContext.SVM_USER.publicKey.toBuffer()],
+      [
+        Buffer.from("svm-withdraw-counter"),
+        SVMContext.SVM_USER.publicKey.toBuffer(),
+      ],
       SVMContext.SVM_BRIDGE_PROGRAM_ID,
     );
     console.log(`Counter key: ${counterKey.toString()}`);
@@ -145,6 +149,24 @@ describe("test deposit and withdraw", () => {
     );
     expect(startingInfo).not.toBeNull();
     const startingSol = startingInfo?.lamports ?? 0;
+
+    const createUserCounterIndex = Buffer.from(
+      Int8Array.from([createCounterIndex]),
+    );
+    const userCounterInstruction = new TransactionInstruction({
+      data: Buffer.concat([createUserCounterIndex]),
+      keys: [
+        { pubkey: SYSTEM_PROGRAM, isSigner: false, isWritable: false },
+        { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
+        { pubkey: counterKey, isSigner: false, isWritable: true },
+        {
+          pubkey: SVMContext.SVM_USER.publicKey,
+          isSigner: true,
+          isWritable: false,
+        },
+      ],
+      programId: SVMContext.SVM_BRIDGE_PROGRAM_ID,
+    });
 
     const accountInfo =
       await SVMContext.SVM_Connection.getAccountInfo(counterKey);
@@ -200,7 +222,10 @@ describe("test deposit and withdraw", () => {
       programId: SVMContext.SVM_BRIDGE_PROGRAM_ID,
     });
 
-    const signature = await sendTransaction(SVMContext, [instruction]);
+    const signature = await sendTransaction(SVMContext, [
+      userCounterInstruction,
+      instruction,
+    ]);
     withdrawalSignature = signature;
 
     await sleep(100);
@@ -218,10 +243,18 @@ describe("test deposit and withdraw", () => {
       txInfo?.transaction.message.accountKeys.findIndex(
         (acc) => acc.pubkey.toString() === withdrawTxKey.toString(),
       ) ?? -1;
+    const newCounterAccountIndex =
+      txInfo?.transaction.message.accountKeys.findIndex(
+        (acc) => acc.pubkey.toString() === counterKey.toString(),
+      ) ?? -1;
     expect(newWithdrawalAccountIndex).toBeGreaterThanOrEqual(0);
     const after = txInfo?.meta?.postBalances?.[newWithdrawalAccountIndex] ?? 0;
     const before = txInfo?.meta?.preBalances?.[newWithdrawalAccountIndex] ?? 0;
-    const rentPaid = after - before;
+    const afterCounter =
+      txInfo?.meta?.postBalances?.[newCounterAccountIndex] ?? 0;
+    const beforeCounter =
+      txInfo?.meta?.preBalances?.[newCounterAccountIndex] ?? 0;
+    const rentPaid = after - before + (afterCounter - beforeCounter);
 
     console.log(`newWithdrawalAccountIndex: ${newWithdrawalAccountIndex}`);
     console.log(`after: ${after}`);

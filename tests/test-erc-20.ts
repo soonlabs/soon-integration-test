@@ -51,6 +51,7 @@ const halfERC: bigint = 500_000_000_000_000_000n;
 const gasLimit: number = 10_000;
 const oneSol = LAMPORTS_PER_SOL;
 const zeroBuffer: Buffer = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]);
+const createCounterIndex = 9;
 
 describe("test erc-20", () => {
   let EVMContext: EVM_CONTEXT;
@@ -165,7 +166,10 @@ describe("test erc-20", () => {
     );
 
     const [counterKey] = PublicKey.findProgramAddressSync(
-      [Buffer.from("svm-withdraw-counter"), SVMContext.SVM_USER.publicKey.toBuffer()],
+      [
+        Buffer.from("svm-withdraw-counter"),
+        SVMContext.SVM_USER.publicKey.toBuffer(),
+      ],
       SVMContext.SVM_BRIDGE_PROGRAM_ID,
     );
     console.log(`Counter key: ${counterKey.toString()}`);
@@ -179,6 +183,24 @@ describe("test erc-20", () => {
       SVMContext.SVM_USER.publicKey,
     );
     expect(startingBalance).toEqual(oneERC);
+
+    const createUserCounterIndex = Buffer.from(
+      Int8Array.from([createCounterIndex]),
+    );
+    const userCounterInstruction = new TransactionInstruction({
+      data: Buffer.concat([createUserCounterIndex]),
+      keys: [
+        { pubkey: SYSTEM_PROGRAM, isSigner: false, isWritable: false },
+        { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
+        { pubkey: counterKey, isSigner: false, isWritable: true },
+        {
+          pubkey: SVMContext.SVM_USER.publicKey,
+          isSigner: true,
+          isWritable: false,
+        },
+      ],
+      programId: SVMContext.SVM_BRIDGE_PROGRAM_ID,
+    });
 
     const withdrawTxSeed = accountInfo?.data.slice(0, 8) ?? zeroBuffer;
     const counter = Numberu64.fromBuffer(withdrawTxSeed);
@@ -245,7 +267,10 @@ describe("test erc-20", () => {
       programId: SVMContext.SVM_BRIDGE_PROGRAM_ID,
     });
     console.log(`Withdraw ID: ${withdrawTxKey.toString()}`);
-    const signature = await sendTransaction(SVMContext, [instruction]);
+    const signature = await sendTransaction(SVMContext, [
+      userCounterInstruction,
+      instruction,
+    ]);
 
     await sleep(200);
     const status =
