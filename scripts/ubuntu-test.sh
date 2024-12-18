@@ -98,7 +98,15 @@ yarn
 yarn test
 
 # kill processes
-pgrep -io "anvil" | xargs kill
-pgrep -io "soon-node" | xargs kill -KILL
-pgrep -io "proposer" | xargs kill
-pgrep -io "batcher" | xargs kill -KILL
+if pgrep -io "anvil" >/dev/null 2>&1; then
+    pgrep -io "anvil" | xargs kill
+fi
+if pgrep -io "soon-node" >/dev/null 2>&1; then
+    pgrep -io "soon-node" | xargs kill -KILL
+fi
+if pgrep -io "proposer" >/dev/null 2>&1; then
+    pgrep -io "proposer" | xargs kill || true
+fi
+if pgrep -io "batcher" >/dev/null 2>&1; then
+    pgrep -io "batcher" | xargs kill -KILL || true
+fi

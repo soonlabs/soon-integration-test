@@ -412,7 +412,9 @@ describe("test erc-20", () => {
     const endingBalance = await ERC20Contract.balanceOf(
       EVMContext.EVM_USER.address,
     );
-    console.log(`start eth: ${startingBalance}, end eth: ${endingBalance}`);
+    console.log(
+      `start erc-20: ${startingBalance}, end erc-20: ${endingBalance}`,
+    );
 
     // check erc-20 balances on L1 match
     expect(startingBalance.add(halfERC)).toEqual(endingBalance);
