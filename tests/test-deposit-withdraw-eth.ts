@@ -43,6 +43,7 @@ import bs58 from "bs58";
 const gasLimit = 100000;
 const tenthETH: bigint = 100_000_000_000_000_000n;
 const oneSol = LAMPORTS_PER_SOL;
+const zeroBuffer: Buffer = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]);
 
 describe("test deposit and withdraw", () => {
   let EVMContext: EVM_CONTEXT;
@@ -133,14 +134,11 @@ describe("test deposit and withdraw", () => {
       `withdrawal from ${SVMContext.SVM_USER.publicKey.toBase58()} to ${l1Target}`,
     );
 
-    const counterKey = genProgramDataAccountKey(
-      "svm-withdraw-counter",
+    const [counterKey] = PublicKey.findProgramAddressSync(
+      [Buffer.from("svm-withdraw-counter"), SVMContext.SVM_USER.publicKey.toBuffer()],
       SVMContext.SVM_BRIDGE_PROGRAM_ID,
     );
     console.log(`Counter key: ${counterKey.toString()}`);
-
-    const accountInfo =
-      await SVMContext.SVM_Connection.getAccountInfo(counterKey);
 
     const startingInfo = await SVMContext.SVM_Connection.getAccountInfo(
       SVMContext.SVM_USER.publicKey,
@@ -148,13 +146,16 @@ describe("test deposit and withdraw", () => {
     expect(startingInfo).not.toBeNull();
     const startingSol = startingInfo?.lamports ?? 0;
 
-    const withdrawTxSeed = accountInfo!.data.slice(0, 8);
+    const accountInfo =
+      await SVMContext.SVM_Connection.getAccountInfo(counterKey);
+
+    const withdrawTxSeed = accountInfo?.data.slice(0, 8) ?? zeroBuffer;
     const counter = Numberu64.fromBuffer(withdrawTxSeed);
     console.log(`counter: ${counter}`);
 
     // get withdraw tx key
     let [key] = PublicKey.findProgramAddressSync(
-      [withdrawTxSeed],
+      [SVMContext.SVM_USER.publicKey.toBuffer(), withdrawTxSeed],
       SVMContext.SVM_BRIDGE_PROGRAM_ID,
     );
     withdrawTxKey = key;

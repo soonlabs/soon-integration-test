@@ -50,6 +50,7 @@ const oneERC: bigint = 1_000_000_000_000_000_000n;
 const halfERC: bigint = 500_000_000_000_000_000n;
 const gasLimit: number = 10_000;
 const oneSol = LAMPORTS_PER_SOL;
+const zeroBuffer: Buffer = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]);
 
 describe("test erc-20", () => {
   let EVMContext: EVM_CONTEXT;
@@ -163,8 +164,8 @@ describe("test erc-20", () => {
       `withdrawal from ${SVMContext.SVM_USER.publicKey.toBase58()} to ${l1Target}`,
     );
 
-    const counterKey = genProgramDataAccountKey(
-      "svm-withdraw-counter",
+    const [counterKey] = PublicKey.findProgramAddressSync(
+      [Buffer.from("svm-withdraw-counter"), SVMContext.SVM_USER.publicKey.toBuffer()],
       SVMContext.SVM_BRIDGE_PROGRAM_ID,
     );
     console.log(`Counter key: ${counterKey.toString()}`);
@@ -179,7 +180,7 @@ describe("test erc-20", () => {
     );
     expect(startingBalance).toEqual(oneERC);
 
-    const withdrawTxSeed = accountInfo!.data.slice(0, 8);
+    const withdrawTxSeed = accountInfo?.data.slice(0, 8) ?? zeroBuffer;
     const counter = Numberu64.fromBuffer(withdrawTxSeed);
     console.log(`counter: ${counter}`);
 
@@ -192,7 +193,7 @@ describe("test erc-20", () => {
 
     //get withdraw tx key
     [withdrawTxKey] = PublicKey.findProgramAddressSync(
-      [withdrawTxSeed],
+      [SVMContext.SVM_USER.publicKey.toBuffer(), withdrawTxSeed.reverse()],
       SVMContext.SVM_BRIDGE_PROGRAM_ID,
     );
 
@@ -454,7 +455,7 @@ async function createSpl(
     programId: context.SVM_BRIDGE_PROGRAM_ID,
   });
 
-  await sendTransaction(context, [instruction], context.SVM_BRIDGE_ADMIN);
+  await sendTransaction(context, [instruction], true);
 
   console.log(`l2Token: ${splTokenMintKey.toBase58()}`);
   return splTokenMintKey;
