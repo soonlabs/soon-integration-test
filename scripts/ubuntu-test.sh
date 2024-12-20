@@ -2,6 +2,9 @@
 
 CURRENT_PATH=$(pwd)
 
+# manually set foundry binaries, if source .bashrc doesn't work
+export PATH="$PATH:~/.foundry/bin"
+
 if [[ -z "${SOON_PATH}" ]]; then
     export SOON_PATH=../soon
 fi
