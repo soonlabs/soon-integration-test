@@ -40,8 +40,8 @@ import { spamL2Tx } from "./helper/spam-utils";
 import axios from "axios";
 import bs58 from "bs58";
 
-const gasLimit = 100000;
-const tenthETH: bigint = 100_000_000_000_000_000n;
+const gasLimit = 50_000;
+const oneETH: bigint = 1_000_000_000_000_000_000n;
 const oneSol = LAMPORTS_PER_SOL;
 const zeroBuffer: Buffer = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]);
 const createCounterIndex = 9;
@@ -91,10 +91,10 @@ describe("test deposit and withdraw", () => {
     const receipt = await (
       await L1Bridge.bridgeETHTo(
         base58PublicKeyToHex(SVMContext.SVM_USER.publicKey.toBase58()),
-        gasLimit,
+        100000,
         "0x",
         {
-          value: tenthETH,
+          value: oneETH,
           gasLimit: 1000000,
         },
       )
@@ -108,7 +108,7 @@ describe("test deposit and withdraw", () => {
     // check that balances on L1 match
     expect(
       startingBalance
-        .sub(tenthETH)
+        .sub(oneETH)
         .sub(receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice)),
     ).toEqual(endBalance);
 
@@ -123,7 +123,7 @@ describe("test deposit and withdraw", () => {
     const endSol = endingAccount?.lamports;
 
     console.log(`start: ${startingSol}, end: ${endSol}`);
-    expect(startingSol + oneSol * 0.1).toEqual(endSol);
+    expect(startingSol + oneSol).toEqual(endSol);
   });
 
   // sequential test for each step of withdraw process
@@ -353,7 +353,7 @@ describe("test deposit and withdraw", () => {
         },
         response1.data.result.withdrawalProof,
         {
-          gasLimit: 10000000,
+          gasLimit: 1000000,
         },
       )
     ).wait(1);
@@ -387,7 +387,7 @@ describe("test deposit and withdraw", () => {
       await OptimismPortal.connect(
         EVMContext.EVM_USER,
       ).finalizeWithdrawalTransaction(withdrawTx, {
-        gasLimit: 10000000,
+        gasLimit: 1000000,
       })
     ).wait(1);
     console.log(
@@ -399,9 +399,9 @@ describe("test deposit and withdraw", () => {
 
     // check that balances on L1 match
     expect(
-      startingBalance.sub(
-        receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice),
-      ),
+      startingBalance
+        .add(oneETH / 2n)
+        .sub(receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice)),
     ).toEqual(endingBalance);
   });
 });
