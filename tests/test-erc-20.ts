@@ -51,7 +51,6 @@ const halfERC: bigint = 500_000_000_000_000_000n;
 const gasLimit: number = 10_000;
 const oneSol = LAMPORTS_PER_SOL;
 const zeroBuffer: Buffer = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]);
-const createCounterIndex = 9;
 
 describe("test erc-20", () => {
   let EVMContext: EVM_CONTEXT;
@@ -185,7 +184,9 @@ describe("test erc-20", () => {
     expect(startingBalance).toEqual(oneERC);
 
     const createUserCounterIndex = Buffer.from(
-      Int8Array.from([createCounterIndex]),
+      Int8Array.from([
+        BridgeInstructionIndex.CreateUserWithdrawalCounterAccount,
+      ]),
     );
     const userCounterInstruction = new TransactionInstruction({
       data: Buffer.concat([createUserCounterIndex]),

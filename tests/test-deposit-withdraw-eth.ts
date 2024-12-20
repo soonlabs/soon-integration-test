@@ -151,7 +151,9 @@ describe("test deposit and withdraw", () => {
     const startingSol = startingInfo?.lamports ?? 0;
 
     const createUserCounterIndex = Buffer.from(
-      Int8Array.from([createCounterIndex]),
+      Int8Array.from([
+        BridgeInstructionIndex.CreateUserWithdrawalCounterAccount,
+      ]),
     );
     const userCounterInstruction = new TransactionInstruction({
       data: Buffer.concat([createUserCounterIndex]),
