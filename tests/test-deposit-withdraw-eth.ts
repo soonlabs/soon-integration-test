@@ -44,7 +44,6 @@ const gasLimit = 50_000;
 const oneETH: bigint = 1_000_000_000_000_000_000n;
 const oneSol = LAMPORTS_PER_SOL;
 const zeroBuffer: Buffer = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]);
-const createCounterIndex = 9;
 
 describe("test deposit and withdraw", () => {
   let EVMContext: EVM_CONTEXT;
