@@ -6,7 +6,19 @@ When first cloning repo, run below command to recursively clone into all the sub
 git submodule update --init --recursive
 ```
 
-## Setup
+## Setup Local Network with Binaries and Run Tests
+
+Script to install dependencies, setup and run tests on a debian based linux machine. Note you will prompted for sudo password for installs. However script will not work if you run it as root user. (SOON_PATH defaults to ../soon).
+
+You may want to comment out some steps such as install.sh if you already have dependencies installed or build-soon.sh if you already built soon binaries. Also, for now, the install script doesn't work for MacOS or other linux disros, you must manually install.
+
+```sh
+SOON_PATH=../soon ./scripts/ubuntu-test.sh
+```
+
+## Setup Local Docker network
+
+If you would rather run network in docker, follow bellow steps
 
 Copy environmental variables and change according to your environment
 
@@ -26,8 +38,6 @@ Build local docker files from soon monorepo binaries
 make build
 ```
 
-## Running setup script
-
 After setup you can run script to setup local docker network of L1, soon node, soon proposer
 
 ```sh
@@ -36,18 +46,10 @@ After setup you can run script to setup local docker network of L1, soon node, s
 
 ## Run Tests
 
-With docker network up and running in another terminal run tests with command below
+With local network up and running, run tests with command below
 
 ```sh
 yarn && yarn tests
-```
-
-## Ubuntu test
-
-script to install dependencies, setup and run tests. Note you will prompted for sudo password for installs. However script will not work if you run it as root user. (SOON_PATH defaults to ../soon)
-
-```sh
-SOON_PATH=../soon ./scripts/ubuntu-test.sh
 ```
 
 ## Important config
