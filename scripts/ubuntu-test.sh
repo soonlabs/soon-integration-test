@@ -100,6 +100,8 @@ export SVM_RPC_URL=http://127.0.0.1:8899
 
 yarn
 yarn test
+# save exit code (this line must be directly after yarn test)
+e=$?
 
 # kill processes
 if pgrep -io "anvil" >/dev/null 2>&1; then
@@ -114,3 +116,6 @@ fi
 if pgrep -io "batcher" >/dev/null 2>&1; then
     pgrep -io "batcher" | xargs kill -KILL || true
 fi
+
+# exit code of `yarn test` is what is returned
+exit $e
