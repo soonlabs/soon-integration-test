@@ -356,7 +356,7 @@
   dependencies:
     "@ethersproject/logger" "^5.7.0"
 
-"@ethersproject/providers@5.7.2":
+"@ethersproject/providers@5.7.2", "@ethersproject/providers@^5.7.2":
   version "5.7.2"
   resolved "https://registry.npmjs.org/@ethersproject/providers/-/providers-5.7.2.tgz"
   integrity sha512-g34EWZ1WWAVgr4aptGlVBF8mhl3VWjv+8hoAnzStu8Ah22VHBsuGzP17eb6xDVRzw895G4W7vvx60lFFur/1Rg==
@@ -1842,6 +1842,7 @@ snake-case@^3.0.4:
   version "1.0.0"
   dependencies:
     "@coral-xyz/anchor" "^0.30.1"
+    "@ethersproject/providers" "^5.7.2"
     "@solana/spl-token" "^0.4.8"
     "@solana/web3.js" "^1.93.1"
     "@types/bn.js" "^5.1.5"

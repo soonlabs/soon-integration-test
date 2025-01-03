@@ -306,7 +306,7 @@ describe("test deposit and withdraw", () => {
     }
 
     //get output root proof
-    const response0 = await axios.post(SVMContext.SVM_SOON_RPC_URL, {
+    const response0 = await axios.post(SVMContext.SVM_RPC_URL, {
       jsonrpc: "2.0",
       id: 1,
       method: "outputAtBlock",
@@ -315,7 +315,7 @@ describe("test deposit and withdraw", () => {
     console.log("outputAtBlock response data:", response0.data);
 
     //get withdraw proof
-    const response1 = await axios.post(SVMContext.SVM_SOON_RPC_URL, {
+    const response1 = await axios.post(SVMContext.SVM_RPC_URL, {
       jsonrpc: "2.0",
       id: 1,
       method: "getSoonWithdrawalProof",
