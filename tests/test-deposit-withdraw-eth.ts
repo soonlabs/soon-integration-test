@@ -36,7 +36,7 @@ import {
   parseWithdrawTxInfo,
   sleep,
 } from "soon-bridge-tool/src/helper/tool";
-import { spamL2Tx } from "./helper/spam-utils";
+import { spamL1Tx, spamL2Tx } from "./helper/spam-utils";
 import axios from "axios";
 import bs58 from "bs58";
 
@@ -98,6 +98,9 @@ describe("test deposit and withdraw", () => {
         },
       )
     ).wait(1);
+
+    await spamL1Tx(EVMContext, 5);
+    await sleep(1000);
 
     console.log(`Deposit ETH success. txHash: ${receipt.transactionHash}`);
 

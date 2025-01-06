@@ -42,7 +42,7 @@ import {
 } from "@solana/spl-token";
 import { TestERC20__factory } from "../typechain/factories/TestERC20__factory";
 import { TestERC20 } from "../typechain/TestERC20";
-import { spamL2Tx } from "./helper/spam-utils";
+import { spamL2Tx, spamL1Tx } from "./helper/spam-utils";
 import axios from "axios";
 import bs58 from "bs58";
 
@@ -135,7 +135,9 @@ describe("test erc-20", () => {
       )
     ).wait(1);
 
-    await sleep(500);
+    await spamL1Tx(EVMContext, 5);
+    await sleep(1000);
+
     const endingL2Balance = await getSplTokenBalance(
       SVMContext,
       l2Token,
