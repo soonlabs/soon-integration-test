@@ -21,15 +21,6 @@ if [[ ! -f "${CURRENT_PATH}/.git/config" ]] || ! grep -q "\[submodule\]" "${CURR
     git submodule update --init --recursive
 fi
 
-# Handle branch switching
-if [[ -n "${SOON_BRANCH}" ]]; then
-    echo "Switching to specified branch ${SOON_BRANCH}..."
-    (cd "${SOON_PATH}" && git checkout "${SOON_BRANCH}")
-else
-    echo "No branch specified, switching to origin/main..."
-    (cd "${SOON_PATH}" && git checkout origin/main)
-fi
-
 if [[ -z "${DEPLOYMENT_PATH}" ]]; then
     export DEPLOYMENT_PATH=${CURRENT_PATH}/deployments/it-deploy.json
 fi
