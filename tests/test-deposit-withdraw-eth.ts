@@ -40,7 +40,7 @@ import { spamL1Tx, spamL2Tx } from "./helper/spam-utils";
 import axios from "axios";
 import bs58 from "bs58";
 
-const gasLimit = 50_000;
+const gasLimit = 1_000_000;
 const oneETH: bigint = 1_000_000_000_000_000_000n;
 const oneSol = LAMPORTS_PER_SOL;
 const zeroBuffer: Buffer = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]);
@@ -391,7 +391,7 @@ describe("test deposit and withdraw", () => {
       await OptimismPortal.connect(
         EVMContext.EVM_USER,
       ).finalizeWithdrawalTransaction(withdrawTx, {
-        gasLimit: 1000000,
+        gasLimit: 10_000_000,
       })
     ).wait(1);
     console.log(
