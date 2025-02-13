@@ -15,7 +15,8 @@
     "bs58": "^6.0.0",
     "ethers": "^5.7.2",
     "soon-bridge-tool": "file:./soon-bridge-tool/",
-    "vitest": "^2.1.6"
+    "vitest": "^2.1.6",
+    "@metaplex-foundation/js": "^0.20.1"
   },
   "devDependencies": {
     "@typechain/ethers-v5": "^11.1.1",

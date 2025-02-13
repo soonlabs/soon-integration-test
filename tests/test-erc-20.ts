@@ -40,6 +40,7 @@ import {
   TOKEN_PROGRAM_ID,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
+import { PROGRAM_ID as mplProgramId } from '@metaplex-foundation/mpl-token-metadata';
 import { TestERC20__factory } from "../typechain/factories/TestERC20__factory";
 import { TestERC20 } from "../typechain/TestERC20";
 import { spamL2Tx, spamL1Tx } from "./helper/spam-utils";
@@ -101,13 +102,14 @@ describe("test erc-20", () => {
     l1Token = ERC20Contract.address;
     const name = await ERC20Contract.name();
     const symbol = await ERC20Contract.symbol();
+    const mockURI = "https://ipfs.io/ipfs/QmXRVXSRbH9nKYPgVfakXRhDhEaXWs6QYu3rToadXhtHPr";
     // must be less than 10, use 8
     const decimals = 8;
 
     console.log(`token name: ${name}`);
     console.log(`token addr: ${ERC20Contract.address}`);
 
-    l2Token = await createSpl(SVMContext, l1Token, name, symbol, decimals);
+    l2Token = await createSpl(SVMContext, l1Token, name, symbol, mockURI, decimals);
     await sleep(100);
   });
 
@@ -433,6 +435,7 @@ async function createSpl(
   l1Token: string,
   name: string,
   symbol: string,
+  uri: string,
   decimals: number,
 ): Promise<PublicKey> {
   const [splTokenOwnerKey] = PublicKey.findProgramAddressSync(
@@ -459,6 +462,15 @@ async function createSpl(
   );
   console.log(`bridgeOwnerKey: ${bridgeOwnerKey.toString()}`);
 
+  const [metadataKey] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from('metadata'),
+        mplProgramId.toBuffer(),
+        splTokenMintKey.toBuffer(),
+      ],
+      mplProgramId,
+  );
+
   const instructionIndex = Buffer.from(
     Int8Array.from([BridgeInstructionIndex.CreateSPL]),
   );
@@ -470,6 +482,8 @@ async function createSpl(
       Buffer.from(name, "utf8"),
       Buffer.from(Int8Array.from([symbol.length])),
       Buffer.from(symbol, "utf8"),
+      Buffer.from(Int8Array.from([uri.length])),
+      Buffer.from(uri, "utf8"),
       Buffer.from(Int8Array.from([decimals])),
     ]),
     keys: [
@@ -483,8 +497,10 @@ async function createSpl(
       {
         pubkey: context.SVM_BRIDGE_ADMIN.publicKey,
         isSigner: true,
-        isWritable: false,
+        isWritable: true,
       },
+      { pubkey: mplProgramId, isSigner: false, isWritable: false },
+      { pubkey: metadataKey, isSigner: false, isWritable: true },
     ],
     programId: context.SVM_BRIDGE_PROGRAM_ID,
   });

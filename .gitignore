@@ -1,8 +1,10 @@
 node_modules/
 .env
+
 .soon/
 build/.envrc
 deployments
 contracts/cache
 contracts/out
 bin/
+.idea/
