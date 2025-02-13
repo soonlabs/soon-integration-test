@@ -28,6 +28,7 @@ genesis:
 	RUST_LOG=info $(SOON_PATH)/target/release/soon-genesis \
 		-t ./.soon \
 		-p $(SOON_PATH)/node/programs/target/deploy \
+		--enable-mpl-programs \
 		--faucet-lamports 100000000000000000 \
 		--l1-cross-domain-messenger $(L1_CROSS_DOMAIN_PROXY) \
 		--l1-standard-bridge $(L1_STANDARD_BRIDGE_PROXY) \
