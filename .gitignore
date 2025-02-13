@@ -6,3 +6,4 @@ deployments
 contracts/cache
 contracts/out
 bin/
+.idea/
