@@ -103,7 +103,7 @@ describe("test erc-20", () => {
       SVMContext.SVM_BRIDGE_ADMIN.publicKey
     );
     console.log(
-      `before erc-20 test: admin balance: ${user_balance}, user_balance: ${admin_balance}`
+      `before erc-20 test: admin balance: ${admin_balance}, user_balance: ${user_balance}`
     );
 
     const tokenContractFactory = new TestERC20__factory(EVMContext.EVM_USER);
