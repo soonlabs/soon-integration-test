@@ -96,16 +96,12 @@ describe("test erc-20", () => {
       oneSol
     );
 
-    let user_balance = (
-      await SVMContext.SVM_Connection.getAccountInfo(
-        SVMContext.SVM_USER.publicKey
-      )
-    )?.lamports;
-    let admin_balance = (
-      await SVMContext.SVM_Connection.getAccountInfo(
-        SVMContext.SVM_BRIDGE_ADMIN.publicKey
-      )
-    )?.lamports;
+    let user_balance = await SVMContext.SVM_Connection.getBalance(
+      SVMContext.SVM_USER.publicKey
+    );
+    let admin_balance = await SVMContext.SVM_Connection.getAccountInfo(
+      SVMContext.SVM_BRIDGE_ADMIN.publicKey
+    );
     console.log(
       `before erc-20 test: admin balance: ${user_balance}, user_balance: ${admin_balance}`
     );
