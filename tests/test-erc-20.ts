@@ -40,7 +40,7 @@ import {
   TOKEN_PROGRAM_ID,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
-import { PROGRAM_ID as mplProgramId } from '@metaplex-foundation/mpl-token-metadata';
+import { PROGRAM_ID as mplProgramId } from "@metaplex-foundation/mpl-token-metadata";
 import { TestERC20__factory } from "../typechain/factories/TestERC20__factory";
 import { TestERC20 } from "../typechain/TestERC20";
 import { spamL2Tx, spamL1Tx } from "./helper/spam-utils";
@@ -76,24 +76,38 @@ describe("test erc-20", () => {
     SVMContext = await createSVMContext();
     L1Bridge = L1StandardBridge__factory.connect(
       EVMContext.EVM_STANDARD_BRIDGE,
-      EVMContext.EVM_USER,
+      EVMContext.EVM_USER
     );
 
     // init account space on SOON.
     const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
     if (!accountInfo) {
       await SVMContext.SVM_Connection.requestAirdrop(
         SVMContext.SVM_USER.publicKey,
-        oneSol,
+        oneSol
       );
     }
 
     // init bridge admin
     await SVMContext.SVM_Connection.requestAirdrop(
       SVMContext.SVM_BRIDGE_ADMIN.publicKey,
-      oneSol,
+      oneSol
+    );
+
+    let user_balance = (
+      await SVMContext.SVM_Connection.getAccountInfo(
+        SVMContext.SVM_USER.publicKey
+      )
+    )?.lamports;
+    let admin_balance = (
+      await SVMContext.SVM_Connection.getAccountInfo(
+        SVMContext.SVM_BRIDGE_ADMIN.publicKey
+      )
+    )?.lamports;
+    console.log(
+      `before erc-20 test: admin balance: ${user_balance}, user_balance: ${admin_balance}`
     );
 
     const tokenContractFactory = new TestERC20__factory(EVMContext.EVM_USER);
@@ -102,25 +116,33 @@ describe("test erc-20", () => {
     l1Token = ERC20Contract.address;
     const name = await ERC20Contract.name();
     const symbol = await ERC20Contract.symbol();
-    const mockURI = "https://ipfs.io/ipfs/QmXRVXSRbH9nKYPgVfakXRhDhEaXWs6QYu3rToadXhtHPr";
+    const mockURI =
+      "https://ipfs.io/ipfs/QmXRVXSRbH9nKYPgVfakXRhDhEaXWs6QYu3rToadXhtHPr";
     // must be less than 10, use 8
     const decimals = 8;
 
     console.log(`token name: ${name}`);
     console.log(`token addr: ${ERC20Contract.address}`);
 
-    l2Token = await createSpl(SVMContext, l1Token, name, symbol, mockURI, decimals);
+    l2Token = await createSpl(
+      SVMContext,
+      l1Token,
+      name,
+      symbol,
+      mockURI,
+      decimals
+    );
     await sleep(100);
   });
 
   it.sequential("deposit erc-20", async function () {
     const startingL1Balance = await ERC20Contract.balanceOf(
-      EVMContext.EVM_USER.address,
+      EVMContext.EVM_USER.address
     );
     const startingL2Balance = await getSplTokenBalance(
       SVMContext,
       l2Token,
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
 
     await (
@@ -137,7 +159,7 @@ describe("test erc-20", () => {
         "0x",
         {
           gasLimit: 1_000_000n,
-        },
+        }
       )
     ).wait(1);
 
@@ -147,17 +169,17 @@ describe("test erc-20", () => {
     const endingL2Balance = await getSplTokenBalance(
       SVMContext,
       l2Token,
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
     const endingL1Balance = await ERC20Contract.balanceOf(
-      EVMContext.EVM_USER.address,
+      EVMContext.EVM_USER.address
     );
     console.log(`Deposit ERC20 success. txHash: ${receipt.transactionHash}`);
     console.log(
-      `starting l1 amount: ${startingL1Balance}, ending l1 amount: ${endingL1Balance}`,
+      `starting l1 amount: ${startingL1Balance}, ending l1 amount: ${endingL1Balance}`
     );
     console.log(
-      `starting l2 amount: ${startingL2Balance}, ending l2 balance: ${endingL2Balance}`,
+      `starting l2 amount: ${startingL2Balance}, ending l2 balance: ${endingL2Balance}`
     );
 
     expect(startingL1Balance.sub(oneERC)).toEqual(endingL1Balance);
@@ -169,7 +191,7 @@ describe("test erc-20", () => {
     expect(isValidEthereumAddress(l1Target)).toBeTruthy();
 
     console.log(
-      `withdrawal from ${SVMContext.SVM_USER.publicKey.toBase58()} to ${l1Target}`,
+      `withdrawal from ${SVMContext.SVM_USER.publicKey.toBase58()} to ${l1Target}`
     );
 
     const [counterKey] = PublicKey.findProgramAddressSync(
@@ -177,7 +199,7 @@ describe("test erc-20", () => {
         Buffer.from("svm-withdraw-counter"),
         SVMContext.SVM_USER.publicKey.toBuffer(),
       ],
-      SVMContext.SVM_BRIDGE_PROGRAM_ID,
+      SVMContext.SVM_BRIDGE_PROGRAM_ID
     );
     console.log(`Counter key: ${counterKey.toString()}`);
 
@@ -187,14 +209,14 @@ describe("test erc-20", () => {
     const startingBalance = await getSplTokenBalance(
       SVMContext,
       l2Token,
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
     expect(startingBalance).toEqual(oneERCSol);
 
     const createUserCounterIndex = Buffer.from(
       Int8Array.from([
         BridgeInstructionIndex.CreateUserWithdrawalCounterAccount,
-      ]),
+      ])
     );
     const userCounterInstruction = new TransactionInstruction({
       data: Buffer.concat([createUserCounterIndex]),
@@ -218,36 +240,36 @@ describe("test erc-20", () => {
     //get bridge config key
     const bridgeConfigKey = genProgramDataAccountKey(
       "bridge-config",
-      DEFAULT_BRIDGE_PROGRAM,
+      DEFAULT_BRIDGE_PROGRAM
     );
     console.log(`bridgeConfigKey key: ${bridgeConfigKey.toString()}`);
 
     //get withdraw tx key
     [withdrawTxKey] = PublicKey.findProgramAddressSync(
       [SVMContext.SVM_USER.publicKey.toBuffer(), withdrawTxSeed.reverse()],
-      SVMContext.SVM_BRIDGE_PROGRAM_ID,
+      SVMContext.SVM_BRIDGE_PROGRAM_ID
     );
 
     const [splTokenOwnerKey] = PublicKey.findProgramAddressSync(
       [Buffer.from("spl-owner"), ethers.utils.arrayify(l1Token)],
-      SVMContext.SVM_BRIDGE_PROGRAM_ID,
+      SVMContext.SVM_BRIDGE_PROGRAM_ID
     );
     console.log(`splTokenOwnerKey: ${splTokenOwnerKey.toString()}`);
 
     const [splTokenMintKey] = PublicKey.findProgramAddressSync(
       [Buffer.from("spl-mint"), ethers.utils.arrayify(l1Token)],
-      SVMContext.SVM_BRIDGE_PROGRAM_ID,
+      SVMContext.SVM_BRIDGE_PROGRAM_ID
     );
     console.log(`splTokenMintKey: ${splTokenMintKey.toString()}`);
 
     const userATAKey = getAssociatedTokenAddressSync(
       splTokenMintKey,
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
     console.log(`userATAKey: ${userATAKey.toString()}`);
 
     const instructionIndex = Buffer.from(
-      Int8Array.from([BridgeInstructionIndex.WithdrawSPL]),
+      Int8Array.from([BridgeInstructionIndex.WithdrawSPL])
     );
     const instruction = new TransactionInstruction({
       data: Buffer.concat([
@@ -289,10 +311,10 @@ describe("test erc-20", () => {
     const endingBalance = await getSplTokenBalance(
       SVMContext,
       l2Token,
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
     console.log(
-      `starting erc-20: ${startingBalance}, ending erc-20: ${endingBalance}`,
+      `starting erc-20: ${startingBalance}, ending erc-20: ${endingBalance}`
     );
     expect(startingBalance - halfERCSol).toEqual(endingBalance);
   });
@@ -303,13 +325,13 @@ describe("test erc-20", () => {
     // 3. generate proof and verify.
     const OptimismPortal = OptimismPortal__factory.connect(
       EVMContext.EVM_OP_PORTAL,
-      EVMContext.EVM_USER,
+      EVMContext.EVM_USER
     );
     const l2OutputOracleAddress = await OptimismPortal.l2Oracle();
     console.log(`l2OutputOracleAddress: ${l2OutputOracleAddress}`);
     const L2OutputOracle = L2OutputOracle__factory.connect(
       l2OutputOracleAddress,
-      EVMContext.EVM_PROPOSER!,
+      EVMContext.EVM_PROPOSER!
     );
 
     let proposedHeight;
@@ -319,7 +341,7 @@ describe("test erc-20", () => {
         break;
       }
       console.log(
-        `not proposed yet. current proposed l2 height: ${proposedHeight}, withdraw height: ${withdrawHeight}`,
+        `not proposed yet. current proposed l2 height: ${proposedHeight}, withdraw height: ${withdrawHeight}`
       );
       spamL2Tx(SVMContext, 10);
       await sleep(3000);
@@ -345,23 +367,23 @@ describe("test erc-20", () => {
     console.log("getSoonWithdrawalProof response data:", response1.data);
 
     const withdrawInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      new PublicKey(withdrawTxKey),
+      new PublicKey(withdrawTxKey)
     );
     expect(withdrawInfo).not.toBeNull();
     expect(withdrawInfo?.data.length).toBeGreaterThan(148);
     const withdrawTx = parseWithdrawTxInfo(
-      withdrawInfo?.data ?? Buffer.from(""),
+      withdrawInfo?.data ?? Buffer.from("")
     );
     console.log("withdrawTx:", withdrawTx);
 
     const l2OutputIndex =
       await L2OutputOracle.getL2OutputIndexAfter(proposedHeight);
     const hexPubkey = ethers.utils.hexlify(
-      bs58.decode(withdrawTxKey.toString()),
+      bs58.decode(withdrawTxKey.toString())
     );
     const receipt = await (
       await OptimismPortal.connect(
-        EVMContext.EVM_USER,
+        EVMContext.EVM_USER
       ).proveWithdrawalTransaction(
         withdrawTx,
         l2OutputIndex,
@@ -376,21 +398,21 @@ describe("test erc-20", () => {
         response1.data.result.withdrawalProof,
         {
           gasLimit: 1000000,
-        },
+        }
       )
     ).wait(1);
 
     console.log(
-      `Withdraw tx prove success. txHash: ${receipt.transactionHash}`,
+      `Withdraw tx prove success. txHash: ${receipt.transactionHash}`
     );
   });
 
   it.sequential("finalize withdraw erc-20", async function () {
     const startingBalance = await ERC20Contract.balanceOf(
-      EVMContext.EVM_USER.address,
+      EVMContext.EVM_USER.address
     );
     const withdrawInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      new PublicKey(withdrawTxKey),
+      new PublicKey(withdrawTxKey)
     );
     if (!withdrawInfo || withdrawInfo.data.length < 148) {
       throw new Error("invalid withdraw Id.");
@@ -401,7 +423,7 @@ describe("test erc-20", () => {
 
     const OptimismPortal = OptimismPortal__factory.connect(
       EVMContext.EVM_OP_PORTAL,
-      EVMContext.EVM_USER,
+      EVMContext.EVM_USER
     );
 
     // must wait for finalization period
@@ -409,20 +431,20 @@ describe("test erc-20", () => {
 
     const receipt = await (
       await OptimismPortal.connect(
-        EVMContext.EVM_USER,
+        EVMContext.EVM_USER
       ).finalizeWithdrawalTransaction(withdrawTx, {
         gasLimit: 10000000,
       })
     ).wait(1);
     console.log(
-      `Finalize withdraw success. txHash: ${receipt.transactionHash}`,
+      `Finalize withdraw success. txHash: ${receipt.transactionHash}`
     );
 
     const endingBalance = await ERC20Contract.balanceOf(
-      EVMContext.EVM_USER.address,
+      EVMContext.EVM_USER.address
     );
     console.log(
-      `start erc-20: ${startingBalance}, end erc-20: ${endingBalance}`,
+      `start erc-20: ${startingBalance}, end erc-20: ${endingBalance}`
     );
 
     // check erc-20 balances on L1 match
@@ -436,43 +458,44 @@ async function createSpl(
   name: string,
   symbol: string,
   uri: string,
-  decimals: number,
+  decimals: number
 ): Promise<PublicKey> {
   const [splTokenOwnerKey] = PublicKey.findProgramAddressSync(
     [Buffer.from("spl-owner"), ethers.utils.arrayify(l1Token)],
-    context.SVM_BRIDGE_PROGRAM_ID,
+    context.SVM_BRIDGE_PROGRAM_ID
   );
   console.log(`splTokenOwnerKey: ${splTokenOwnerKey.toString()}`);
 
   const [splTokenMintKey] = PublicKey.findProgramAddressSync(
     [Buffer.from("spl-mint"), ethers.utils.arrayify(l1Token)],
-    context.SVM_BRIDGE_PROGRAM_ID,
+    context.SVM_BRIDGE_PROGRAM_ID
   );
   console.log(`splTokenMintKey: ${splTokenMintKey.toString()}`);
 
   const [vaultKey] = PublicKey.findProgramAddressSync(
     [Buffer.from("vault")],
-    context.SVM_BRIDGE_PROGRAM_ID,
+    context.SVM_BRIDGE_PROGRAM_ID
   );
   console.log(`vaultKey key: ${vaultKey.toString()}`);
 
   const [bridgeOwnerKey] = PublicKey.findProgramAddressSync(
     [Buffer.from("bridge-owner")],
-    context.SVM_BRIDGE_PROGRAM_ID,
+    context.SVM_BRIDGE_PROGRAM_ID
   );
   console.log(`bridgeOwnerKey: ${bridgeOwnerKey.toString()}`);
 
   const [metadataKey] = PublicKey.findProgramAddressSync(
-      [
-        Buffer.from('metadata'),
-        mplProgramId.toBuffer(),
-        splTokenMintKey.toBuffer(),
-      ],
-      mplProgramId,
+    [
+      Buffer.from("metadata"),
+      mplProgramId.toBuffer(),
+      splTokenMintKey.toBuffer(),
+    ],
+    mplProgramId
   );
+  console.log(`metadataKey: ${metadataKey.toString()}`);
 
   const instructionIndex = Buffer.from(
-    Int8Array.from([BridgeInstructionIndex.CreateSPL]),
+    Int8Array.from([BridgeInstructionIndex.CreateSPL])
   );
   const instruction = new TransactionInstruction({
     data: Buffer.concat([
@@ -514,11 +537,11 @@ async function createSpl(
 async function getSplTokenBalance(
   context: SVM_CONTEXT,
   l2Token: PublicKey,
-  account: PublicKey,
+  account: PublicKey
 ): Promise<bigint> {
   const info = await context.SVM_Connection.getParsedTokenAccountsByOwner(
     account,
-    { mint: l2Token },
+    { mint: l2Token }
   );
   const amount = info.value[0]?.account.data.parsed.info.tokenAmount.amount;
 
