@@ -99,7 +99,7 @@ describe("test erc-20", () => {
     let user_balance = await SVMContext.SVM_Connection.getBalance(
       SVMContext.SVM_USER.publicKey
     );
-    let admin_balance = await SVMContext.SVM_Connection.getAccountInfo(
+    let admin_balance = await SVMContext.SVM_Connection.getBalance(
       SVMContext.SVM_BRIDGE_ADMIN.publicKey
     );
     console.log(
