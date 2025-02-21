@@ -18,10 +18,9 @@ import {
   createSVMContext,
   SVM_CONTEXT,
   sendTransaction,
-  SYSTEM_PROGRAM,
-  DEFAULT_BRIDGE_PROGRAM,
   genProgramDataAccountKey,
 } from "soon-bridge-tool/src/helper/svm_context";
+import { SYSTEM_PROGRAM, DEFAULT_BRIDGE_PROGRAM } from "soon-bridge-tool/src/helper/tool";
 import { ethers } from "ethers";
 import {
   base58PublicKeyToHex,
@@ -523,6 +522,8 @@ async function createSpl(
     ],
     programId: context.SVM_BRIDGE_PROGRAM_ID,
   });
+  console.log(`system: ${SYSTEM_PROGRAM}`);
+  console.log(JSON.stringify(instruction));
 
   await sendTransaction(context, [instruction], true);
 
