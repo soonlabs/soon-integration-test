@@ -63,6 +63,7 @@ describe("test deposit and withdraw", () => {
 
     EVMContext = await createEVMContext();
     SVMContext = await createSVMContext();
+
     L1Bridge = L1StandardBridge__factory.connect(
       EVMContext.EVM_STANDARD_BRIDGE,
       EVMContext.EVM_USER
@@ -241,8 +242,10 @@ describe("test deposit and withdraw", () => {
     expect(withdrawHeight).toBeGreaterThan(0);
     console.log(`Withdraw Height: ${withdrawHeight}`);
 
-    const txInfo =
-      await SVMContext.SVM_Connection.getParsedTransaction(signature);
+    const txInfo = await SVMContext.SVM_Connection.getParsedTransaction(
+      signature,
+      { maxSupportedTransactionVersion: 0 }
+    );
     expect(txInfo).not.toBeNull();
 
     const newWithdrawalAccountIndex =
