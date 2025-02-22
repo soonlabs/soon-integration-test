@@ -13,11 +13,13 @@ import {
   BridgeInstructionIndex,
   createSVMContext,
   SVM_CONTEXT,
-  DEFAULT_BRIDGE_PROGRAM,
   genProgramDataAccountKey,
   sendTransaction,
-  SYSTEM_PROGRAM,
 } from "soon-bridge-tool/src/helper/svm_context";
+import {
+  DEFAULT_BRIDGE_PROGRAM,
+  SYSTEM_PROGRAM,
+} from "soon-bridge-tool/src/helper/tool";
 import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
@@ -63,17 +65,17 @@ describe("test deposit and withdraw", () => {
     SVMContext = await createSVMContext();
     L1Bridge = L1StandardBridge__factory.connect(
       EVMContext.EVM_STANDARD_BRIDGE,
-      EVMContext.EVM_USER,
+      EVMContext.EVM_USER
     );
 
     // init account space on SOON.
     const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
     if (!accountInfo) {
       await SVMContext.SVM_Connection.requestAirdrop(
         SVMContext.SVM_USER.publicKey,
-        oneSol * 2,
+        oneSol * 2
       );
     }
     await sleep(100);
@@ -82,7 +84,7 @@ describe("test deposit and withdraw", () => {
   it.sequential("deposit", async function () {
     const startingBalance = await EVMContext.EVM_USER.getBalance();
     const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
     expect(accountInfo).not.toBeNull();
     const startingSol = accountInfo?.lamports ?? 0;
@@ -95,7 +97,7 @@ describe("test deposit and withdraw", () => {
         {
           value: oneETH,
           gasLimit: 1000000,
-        },
+        }
       )
     ).wait(1);
 
@@ -105,13 +107,13 @@ describe("test deposit and withdraw", () => {
     console.log(`Deposit ETH success. txHash: ${receipt.transactionHash}`);
 
     const endBalance = await EVMContext.EVM_PROVIDER.getBalance(
-      EVMContext.EVM_USER.address,
+      EVMContext.EVM_USER.address
     );
     // check that balances on L1 match
     expect(
       startingBalance
         .sub(oneETH)
-        .sub(receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice)),
+        .sub(receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice))
     ).toEqual(endBalance);
 
     // wait sequencer to track.
@@ -119,7 +121,7 @@ describe("test deposit and withdraw", () => {
 
     // check balance on SOON
     const endingAccount = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
     expect(endingAccount).not.toBeNull();
     const endSol = endingAccount?.lamports;
@@ -134,7 +136,7 @@ describe("test deposit and withdraw", () => {
     expect(isValidEthereumAddress(l1Target)).toBeTruthy();
 
     console.log(
-      `withdrawal from ${SVMContext.SVM_USER.publicKey.toBase58()} to ${l1Target}`,
+      `withdrawal from ${SVMContext.SVM_USER.publicKey.toBase58()} to ${l1Target}`
     );
 
     const [counterKey] = PublicKey.findProgramAddressSync(
@@ -142,12 +144,12 @@ describe("test deposit and withdraw", () => {
         Buffer.from("svm-withdraw-counter"),
         SVMContext.SVM_USER.publicKey.toBuffer(),
       ],
-      SVMContext.SVM_BRIDGE_PROGRAM_ID,
+      SVMContext.SVM_BRIDGE_PROGRAM_ID
     );
     console.log(`Counter key: ${counterKey.toString()}`);
 
     const startingInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
     expect(startingInfo).not.toBeNull();
     const startingSol = startingInfo?.lamports ?? 0;
@@ -155,7 +157,7 @@ describe("test deposit and withdraw", () => {
     const createUserCounterIndex = Buffer.from(
       Int8Array.from([
         BridgeInstructionIndex.CreateUserWithdrawalCounterAccount,
-      ]),
+      ])
     );
     const userCounterInstruction = new TransactionInstruction({
       data: Buffer.concat([createUserCounterIndex]),
@@ -182,7 +184,7 @@ describe("test deposit and withdraw", () => {
     // get withdraw tx key
     let [key] = PublicKey.findProgramAddressSync(
       [SVMContext.SVM_USER.publicKey.toBuffer(), withdrawTxSeed],
-      SVMContext.SVM_BRIDGE_PROGRAM_ID,
+      SVMContext.SVM_BRIDGE_PROGRAM_ID
     );
     withdrawTxKey = key;
     console.log(`Withdraw ID: ${withdrawTxKey.toString()}`);
@@ -194,14 +196,14 @@ describe("test deposit and withdraw", () => {
     // get bridge config key
     const bridgeConfigKey = genProgramDataAccountKey(
       "bridge-config",
-      DEFAULT_BRIDGE_PROGRAM,
+      DEFAULT_BRIDGE_PROGRAM
     );
     console.log(`bridgeConfigKey key: ${bridgeConfigKey.toString()}`);
 
     const withdrawalAmount = oneSol * 0.5;
 
     const instructionIndex = Buffer.from(
-      Int8Array.from([BridgeInstructionIndex.WithdrawETH]),
+      Int8Array.from([BridgeInstructionIndex.WithdrawETH])
     );
     const instruction = new TransactionInstruction({
       data: Buffer.concat([
@@ -245,11 +247,11 @@ describe("test deposit and withdraw", () => {
 
     const newWithdrawalAccountIndex =
       txInfo?.transaction.message.accountKeys.findIndex(
-        (acc) => acc.pubkey.toString() === withdrawTxKey.toString(),
+        (acc) => acc.pubkey.toString() === withdrawTxKey.toString()
       ) ?? -1;
     const newCounterAccountIndex =
       txInfo?.transaction.message.accountKeys.findIndex(
-        (acc) => acc.pubkey.toString() === counterKey.toString(),
+        (acc) => acc.pubkey.toString() === counterKey.toString()
       ) ?? -1;
     expect(newWithdrawalAccountIndex).toBeGreaterThanOrEqual(0);
     const after = txInfo?.meta?.postBalances?.[newWithdrawalAccountIndex] ?? 0;
@@ -269,12 +271,12 @@ describe("test deposit and withdraw", () => {
     feePaid ??= 0;
 
     const endingInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      SVMContext.SVM_USER.publicKey,
+      SVMContext.SVM_USER.publicKey
     );
     expect(endingInfo).not.toBeNull();
     const endingSol = endingInfo?.lamports ?? 0;
     expect(startingSol - feePaid - rentPaid - withdrawalAmount).toEqual(
-      endingSol,
+      endingSol
     );
     console.log(`start SOL: ${startingSol} ending SOL: ${endingSol}`);
   });
@@ -285,13 +287,13 @@ describe("test deposit and withdraw", () => {
     // 3. generate proof and verify.
     const OptimismPortal = OptimismPortal__factory.connect(
       EVMContext.EVM_OP_PORTAL,
-      EVMContext.EVM_USER,
+      EVMContext.EVM_USER
     );
     const l2OutputOracleAddress = await OptimismPortal.l2Oracle();
     console.log(`l2OutputOracleAddress: ${l2OutputOracleAddress}`);
     const L2OutputOracle = L2OutputOracle__factory.connect(
       l2OutputOracleAddress,
-      EVMContext.EVM_PROPOSER!,
+      EVMContext.EVM_PROPOSER!
     );
 
     let proposedHeight;
@@ -301,7 +303,7 @@ describe("test deposit and withdraw", () => {
         break;
       }
       console.log(
-        `not proposed yet. current proposed l2 height: ${proposedHeight}, withdraw height: ${withdrawHeight}`,
+        `not proposed yet. current proposed l2 height: ${proposedHeight}, withdraw height: ${withdrawHeight}`
       );
       spamL2Tx(SVMContext, 10);
       await sleep(3000);
@@ -327,23 +329,23 @@ describe("test deposit and withdraw", () => {
     console.log("getSoonWithdrawalProof response data:", response1.data);
 
     const withdrawInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      new PublicKey(withdrawTxKey),
+      new PublicKey(withdrawTxKey)
     );
     expect(withdrawInfo).not.toBeNull();
     expect(withdrawInfo?.data.length).toBeGreaterThan(148);
     const withdrawTx = parseWithdrawTxInfo(
-      withdrawInfo?.data ?? Buffer.from(""),
+      withdrawInfo?.data ?? Buffer.from("")
     );
     console.log("withdrawTx:", withdrawTx);
 
     const l2OutputIndex =
       await L2OutputOracle.getL2OutputIndexAfter(proposedHeight);
     const hexPubkey = ethers.utils.hexlify(
-      bs58.decode(withdrawTxKey.toString()),
+      bs58.decode(withdrawTxKey.toString())
     );
     const receipt = await (
       await OptimismPortal.connect(
-        EVMContext.EVM_USER,
+        EVMContext.EVM_USER
       ).proveWithdrawalTransaction(
         withdrawTx,
         l2OutputIndex,
@@ -358,19 +360,19 @@ describe("test deposit and withdraw", () => {
         response1.data.result.withdrawalProof,
         {
           gasLimit: 1000000,
-        },
+        }
       )
     ).wait(1);
 
     console.log(
-      `Withdraw tx prove success. txHash: ${receipt.transactionHash}`,
+      `Withdraw tx prove success. txHash: ${receipt.transactionHash}`
     );
   });
 
   it.sequential("finalize withdraw", async function () {
     const startingBalance = await EVMContext.EVM_USER.getBalance();
     const withdrawInfo = await SVMContext.SVM_Connection.getAccountInfo(
-      new PublicKey(withdrawTxKey),
+      new PublicKey(withdrawTxKey)
     );
     if (!withdrawInfo || withdrawInfo.data.length < 148) {
       throw new Error("invalid withdraw Id.");
@@ -381,7 +383,7 @@ describe("test deposit and withdraw", () => {
 
     const OptimismPortal = OptimismPortal__factory.connect(
       EVMContext.EVM_OP_PORTAL,
-      EVMContext.EVM_USER,
+      EVMContext.EVM_USER
     );
 
     // must wait for finalization period
@@ -389,13 +391,13 @@ describe("test deposit and withdraw", () => {
 
     const receipt = await (
       await OptimismPortal.connect(
-        EVMContext.EVM_USER,
+        EVMContext.EVM_USER
       ).finalizeWithdrawalTransaction(withdrawTx, {
         gasLimit: 10_000_000,
       })
     ).wait(1);
     console.log(
-      `Finalize withdraw success. txHash: ${receipt.transactionHash}`,
+      `Finalize withdraw success. txHash: ${receipt.transactionHash}`
     );
 
     const endingBalance = await EVMContext.EVM_USER.getBalance();
@@ -405,7 +407,7 @@ describe("test deposit and withdraw", () => {
     expect(
       startingBalance
         .add(oneETH / 2n)
-        .sub(receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice)),
+        .sub(receipt.cumulativeGasUsed.mul(receipt.effectiveGasPrice))
     ).toEqual(endingBalance);
   });
 });
