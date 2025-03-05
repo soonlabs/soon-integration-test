@@ -25,7 +25,7 @@ build:
 .PHONY: build
 
 genesis:
-	RUST_LOG=info ./bin/soon-genesis \
+	rm -rf ./.soon && RUST_LOG=info ./bin/soon-genesis \
 		-t ./.soon \
 		-p $(SOON_PATH)/node/programs/target/deploy \
 		-r $(SOON_PATH)/node/deployments/test.rollup.json \

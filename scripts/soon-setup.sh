@@ -1,14 +1,14 @@
 #!/bin/bash
 
-if [[ -n "${SOON_PATH}" ]]; then
-  rm -rf ${SOON_NODE_STORAGE_PATH}
+if [[ -z "${SOON_PATH}" ]]; then
+    export SOON_PATH=../soon
 fi
 
 make genesis
 
 ./bin/soon-node \
 -t ./.soon \
--r $(SOON_PATH)/node/deployments/test.rollup.json \
+-r ${SOON_PATH}/node/deployments/test.rollup.json \
 --l1-rpc-url "http://127.0.0.1:8545" \
 --enable-faucet \
 --rpc-bind-address "127.0.0.1" \
