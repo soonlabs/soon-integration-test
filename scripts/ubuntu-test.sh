@@ -56,7 +56,7 @@ for key in "${!env_var[@]}"; do
 done
 
 # update soon rollup config
-ROLLUP_CONFIG=$(jq ".l1_chain_id = ${L1_CHAIN_ID}" ${SOON_PATH}/node/deployments/example.rollup.json)
+ROLLUP_CONFIG=$(jq ".l1_chain_id = 31337" ${SOON_PATH}/node/deployments/example.rollup.json)
 ROLLUP_CONFIG=$(echo ${ROLLUP_CONFIG} | jq ".l1_system_config_address = \"${SYSTEM_CONFIG_PROXY}\"")
 echo "${ROLLUP_CONFIG}" | jq . > ${SOON_PATH}/node/deployments/test.rollup.json
 
