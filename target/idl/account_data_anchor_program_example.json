@@ -1,0 +1,99 @@
+{
+  "address": "EjVpuq1j4F8vXequaJEGYH8WMpKytdcv24i39say94uA",
+  "metadata": {
+    "name": "account_data_anchor_program_example",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "create_address_info",
+      "discriminator": [
+        14,
+        194,
+        156,
+        25,
+        142,
+        29,
+        96,
+        112
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "address_info",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "house_number",
+          "type": "u8"
+        },
+        {
+          "name": "street",
+          "type": "string"
+        },
+        {
+          "name": "city",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "AddressInfo",
+      "discriminator": [
+        212,
+        104,
+        35,
+        195,
+        240,
+        21,
+        199,
+        243
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "AddressInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "house_number",
+            "type": "u8"
+          },
+          {
+            "name": "street",
+            "type": "string"
+          },
+          {
+            "name": "city",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ]
+}

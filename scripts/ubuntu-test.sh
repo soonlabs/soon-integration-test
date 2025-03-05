@@ -44,7 +44,7 @@ export ADMIN_SECRET_KEY="0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f46
 export DA_SERVER_RPC=""
 
 # run scripts
-${CURRENT_PATH}/scripts/install.sh
+#${CURRENT_PATH}/scripts/install.sh
 export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
 ${CURRENT_PATH}/scripts/build-soon.sh
 ${CURRENT_PATH}/scripts/l1-setup.sh

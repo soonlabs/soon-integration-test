@@ -7,3 +7,5 @@ contracts/cache
 contracts/out
 bin/
 .idea/
+
+programs/*/target/

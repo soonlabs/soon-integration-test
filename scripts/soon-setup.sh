@@ -5,7 +5,7 @@ if [[ -n "${SOON_PATH}" ]]; then
 fi
 
 make genesis
-./bin/soon-node &>/dev/null &
+./bin/soon-node &>/tmp/node &
 sleep 3
 ./bin/proposer &>/dev/null &
 ./bin/batcher &>/dev/null &
