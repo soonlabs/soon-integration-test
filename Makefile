@@ -25,13 +25,11 @@ build:
 .PHONY: build
 
 genesis:
-	RUST_LOG=info $(SOON_PATH)/target/release/soon-genesis \
+	rm -rf ./.soon && RUST_LOG=info ./bin/soon-genesis \
 		-t ./.soon \
 		-p $(SOON_PATH)/node/programs/target/deploy \
+		-r $(SOON_PATH)/node/deployments/test.rollup.json \
 	    --enable-mpl-programs \
 		--faucet-lamports 100000000000000000 \
-		--l1-cross-domain-messenger $(L1_CROSS_DOMAIN_PROXY) \
-		--l1-standard-bridge $(L1_STANDARD_BRIDGE_PROXY) \
 		--l1-rpc-url $(L1_RPC_URL) \
-		--download-cache-path ~/.cache/solana-spl \
 		$(ARGS)
