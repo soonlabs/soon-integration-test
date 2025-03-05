@@ -38,6 +38,7 @@ echo "== Build done!"
 
 rm -rf bin
 mkdir -p bin
+cp $SOON_PATH/target/release/soon-genesis ./bin
 cp $SOON_PATH/target/release/soon-node ./bin
 cp $SOON_PATH/target/release/proposer ./bin
 cp $SOON_PATH/target/release/batcher ./bin

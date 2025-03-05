@@ -26,12 +26,6 @@ if [[ -z "${DEPLOYMENT_PATH}" ]]; then
 fi
 
 # set some env variables
-export SOON_NODE_STORAGE_PATH=./.soon
-export SOON_NODE_L1_RPC_URL=http://localhost:8545
-export L1ChainID=31337
-export SOON_NODE_ENABLE_DA=false
-export SOON_NODE_DEV_MODE=false
-export SOON_NODE_ENABLE_FAUCET=true
 export L1_ETH_RPC=http://localhost:8545
 export SOON_RPC=http://localhost:8899
 export PRIVATE_KEY="0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
@@ -61,19 +55,14 @@ for key in "${!env_var[@]}"; do
     export $key=${ADDRESS}
 done
 
-export SOON_NODE_DEPOSIT_CONTRACT=${OPTIMISM_PORTAL_PROXY}
-export SOON_NODE_SYSTEM_CONFIG_CONTRACT=${SYSTEM_CONFIG_PROXY}
+# update soon rollup config
+ROLLUP_CONFIG=$(jq ".l1_chain_id = ${L1_CHAIN_ID}" ${SOON_PATH}/node/deployments/example.rollup.json)
+ROLLUP_CONFIG=$(echo ${ROLLUP_CONFIG} | jq ".l1_system_config_address = \"${SYSTEM_CONFIG_PROXY}\"")
+echo "${ROLLUP_CONFIG}" | jq . > ${SOON_PATH}/node/deployments/test.rollup.json
 
 export EVM_PROPOSER_KEY="0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
 export EVM_USER_KEY="0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6"
-export EVM_STANDARD_BRIDGE=$L1_STANDARD_BRIDGE_PROXY
-export SOON_NODE_RPC_BIND_ADDRESS="127.0.0.1"
-export SOON_NODE_BIND_ADDRESS="127.0.0.1"
-export SOON_NODE_FULL_RPC_API="true"
-export SOON_NODE_ENABLE_FAUCET="true"
-export SOON_NODE_DISABLE_SEQUENCER_RECEIVING_TX="false"
-export SOON_NODE_RPC_PUBSUB_ENABLE_BLOCK_SUBSCRIPTION="true"
-export SOON_NODE_ENABLE_SEQUENCER="true"
+export EVM_STANDARD_BRIDGE=${L1_STANDARD_BRIDGE_PROXY}
 
 sleep 3
 
