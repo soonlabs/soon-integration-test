@@ -159,7 +159,8 @@ describe("test erc-20", () => {
     ).wait(1);
 
     await spamL1Tx(EVMContext, 5);
-    await sleep(1000);
+    // wait sequencer to track.
+    await sleep(30000);
 
     const endingL2Balance = await getSplTokenBalance(
       SVMContext,

@@ -118,7 +118,7 @@ describe("test deposit and withdraw", () => {
     ).toEqual(endBalance);
 
     // wait sequencer to track.
-    await sleep(1000);
+    await sleep(30000);
 
     // check balance on SOON
     const endingAccount = await SVMContext.SVM_Connection.getAccountInfo(
