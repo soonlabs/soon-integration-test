@@ -29,6 +29,8 @@ genesis:
 		-t ./.soon \
 		-p $(SOON_PATH)/node/programs/target/deploy \
 		-r $(SOON_PATH)/node/deployments/test.rollup.json \
+		--l1-chain-id 31337 \
+		--l1-system-config-address ${SYSTEM_CONFIG_PROXY} \
 	    --enable-mpl-programs \
 		--faucet-lamports 100000000000000000 \
 		--l1-rpc-url $(L1_RPC_URL) \
