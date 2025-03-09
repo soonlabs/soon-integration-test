@@ -55,12 +55,6 @@ for key in "${!env_var[@]}"; do
     export $key=${ADDRESS}
 done
 
-# update soon rollup config
-ROLLUP_CONFIG=$(jq ".l1_chain_id = 31337" ${SOON_PATH}/node/deployments/example.rollup.json)
-ROLLUP_CONFIG=$(echo ${ROLLUP_CONFIG} | jq ".l1_system_config_address = \"${SYSTEM_CONFIG_PROXY}\"")
-echo "Soon rollup config: \n${ROLLUP_CONFIG}"
-echo "${ROLLUP_CONFIG}" | jq . > ${SOON_PATH}/node/deployments/test.rollup.json
-
 export EVM_PROPOSER_KEY="0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
 export EVM_USER_KEY="0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6"
 export EVM_STANDARD_BRIDGE=${L1_STANDARD_BRIDGE_PROXY}
