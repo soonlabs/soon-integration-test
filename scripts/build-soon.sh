@@ -32,8 +32,8 @@ function install() {
 }
 
 echo "== Building phase..."
-#install
-#build_soon
+install
+build_soon
 echo "== Build done!"
 
 rm -rf bin
