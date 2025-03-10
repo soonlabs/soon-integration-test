@@ -18,11 +18,9 @@ import {
   createSVMContext,
   SVM_CONTEXT,
   sendTransaction,
-  DEFAULT_BRIDGE_PROGRAM,
   genProgramDataAccountKey,
 } from "soon-bridge-tool/src/helper/svm_context";
 import { SYSTEM_PROGRAM, DEFAULT_BRIDGE_PROGRAM } from "soon-bridge-tool/src/helper/tool";
-
 import { ethers } from "ethers";
 import {
   base58PublicKeyToHex,
@@ -80,30 +78,32 @@ const zeroBuffer: Buffer = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]);
 //       EVMContext.EVM_USER
 //     );
 
-//     // init account space on SOON.
-//     const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
-//       SVMContext.SVM_USER.publicKey
-//     );
-//       await SVMContext.SVM_Connection.requestAirdrop(
-//         SVMContext.SVM_USER.publicKey,
-//         oneSol
-//       );
+    // init account space on SOON.
+    const accountInfo = await SVMContext.SVM_Connection.getAccountInfo(
+      SVMContext.SVM_USER.publicKey
+    );
+    if (!accountInfo) {
+      await SVMContext.SVM_Connection.requestAirdrop(
+        SVMContext.SVM_USER.publicKey,
+        oneSol
+      );
+    }
 
-//     // init bridge admin
-//     await SVMContext.SVM_Connection.requestAirdrop(
-//       SVMContext.SVM_BRIDGE_ADMIN.publicKey,
-//       oneSol
-//     );
-// await sleep(2000);
-//     let user_balance = await SVMContext.SVM_Connection.getBalance(
-//       SVMContext.SVM_USER.publicKey
-//     );
-//     let admin_balance = await SVMContext.SVM_Connection.getBalance(
-//       SVMContext.SVM_BRIDGE_ADMIN.publicKey
-//     );
-//     console.log(
-//       `before erc-20 test: admin balance: ${admin_balance}, user_balance: ${user_balance}`
-//     );
+    // init bridge admin
+    await SVMContext.SVM_Connection.requestAirdrop(
+      SVMContext.SVM_BRIDGE_ADMIN.publicKey,
+      oneSol
+    );
+
+    let user_balance = await SVMContext.SVM_Connection.getBalance(
+      SVMContext.SVM_USER.publicKey
+    );
+    let admin_balance = await SVMContext.SVM_Connection.getBalance(
+      SVMContext.SVM_BRIDGE_ADMIN.publicKey
+    );
+    console.log(
+      `before erc-20 test: admin balance: ${admin_balance}, user_balance: ${user_balance}`
+    );
 
 //     const tokenContractFactory = new TestERC20__factory(EVMContext.EVM_USER);
 //     ERC20Contract = await tokenContractFactory.deploy();
@@ -158,8 +158,9 @@ const zeroBuffer: Buffer = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]);
 //       )
 //     ).wait(1);
 
-//     await spamL1Tx(EVMContext, 5);
-//     await sleep(1000);
+    await spamL1Tx(EVMContext, 5);
+    // wait sequencer to track.
+    await sleep(30000);
 
 //     const endingL2Balance = await getSplTokenBalance(
 //       SVMContext,
@@ -522,7 +523,8 @@ async function createSpl(
     ],
     programId: context.SVM_BRIDGE_PROGRAM_ID,
   });
-    console.log(`system: ${SYSTEM_PROGRAM}`)
+  console.log(`system: ${SYSTEM_PROGRAM}`);
+  console.log(JSON.stringify(instruction));
 
    await sendTransaction(context, [instruction], true);
 
