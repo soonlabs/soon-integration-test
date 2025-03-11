@@ -526,7 +526,7 @@ async function createSpl(
   console.log(`system: ${SYSTEM_PROGRAM}`);
   console.log(JSON.stringify(instruction));
 
-  await sendTransaction(context, [instruction], true);
+   await sendTransaction(context, [instruction], true);
 
   console.log(`l2Token: ${splTokenMintKey.toBase58()}`);
   return splTokenMintKey;
