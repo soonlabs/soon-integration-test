@@ -224,6 +224,58 @@ describe("test native programs and custom programs", () => {
     }
   });
 
+  // Add tests for other SPL instructions
+  it("should create SPL token", async () => {
+    // Skip if program wasn't deployed or SDK wasn't initialized
+    if (!sdk) {
+      console.warn("Skipping test: SDK not initialized");
+      return;
+    }
+
+    try {
+      console.log("Creating SPL token...");
+      const txSignature = await sdk.spl.splToken();
+      console.log("SPL token created successfully. Transaction signature:", txSignature);
+      
+      // Verify the transaction was successful
+      const txInfo = await SVMContext.SVM_Connection.getTransaction(txSignature, {
+        commitment: "confirmed",
+      });
+      
+      expect(txInfo).not.toBeNull();
+      expect(txInfo?.meta?.err).toBeNull();
+    } catch (error) {
+      console.error("Failed to create SPL token:", error);
+      throw error;
+    }
+  });
+
+
+  it("should wrap SOL to WSOL", async () => {
+    // Skip if program wasn't deployed or SDK wasn't initialized
+    if (!sdk) {
+      console.warn("Skipping test: SDK not initialized");
+      return;
+    }
+
+    try {
+      console.log("Wrapping SOL to WSOL...");
+      const txSignature = await sdk.spl.wrapSOL();
+      console.log("SOL wrapped to WSOL successfully. Transaction signature:", txSignature);
+      
+      // Verify the transaction was successful
+      const txInfo = await SVMContext.SVM_Connection.getTransaction(txSignature, {
+        commitment: "confirmed",
+      });
+      
+      expect(txInfo).not.toBeNull();
+      expect(txInfo?.meta?.err).toBeNull();
+    } catch (error) {
+      console.error("Failed to wrap SOL to WSOL:", error);
+      throw error;
+    }
+  });
+
   // New tests for account_data_anchor_program_example
   it("should initialize account_data_anchor_program_example program", async () => {
     try {
