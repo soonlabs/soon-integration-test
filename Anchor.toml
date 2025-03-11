@@ -6,7 +6,7 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-builtin_and_spl_cpi = "J3kSr6FzQLxVzkNHaq2YTddaGPy23E2kBcLKBHGP6oD9"
+builtin_and_spl_cpi = "5c7ieGcQcqaGFCBJzHUwYEvcqhdiZAVZb3sfwWwFvCse"
 account_data_anchor_program_example = "EjVpuq1j4F8vXequaJEGYH8WMpKytdcv24i39say94uA"
 
 [registry]

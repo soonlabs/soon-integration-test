@@ -32,7 +32,6 @@ describe("test native programs and custom programs", () => {
   let programKeypair: Keypair;
   let sdk: BuiltinAndSplCpiSDK;
   
-  // 添加这两个变量的定义
   let accountDataProgramId: PublicKey;
   let accountDataProgram: any;
   let addressInfoAccount: Keypair;
@@ -53,7 +52,6 @@ describe("test native programs and custom programs", () => {
         await sleep(1000); // Wait for airdrop to be confirmed
       }
       
-      // 初始化地址信息账户的 Keypair
       addressInfoAccount = Keypair.generate();
     } catch (error) {
       console.error("Setup failed:", error);
@@ -111,17 +109,25 @@ describe("test native programs and custom programs", () => {
         fs.mkdirSync(path.dirname(programDestPath), { recursive: true });
       }
       
-      // Copy the program binary to the expected location
+      // Only copy the program binary if it doesn't already exist in the target directory
       if (fs.existsSync(programSrcPath)) {
-        console.log(`Copying program binary from ${programSrcPath} to ${programDestPath}`);
-        fs.copyFileSync(programSrcPath, programDestPath);
+        if (!fs.existsSync(programDestPath)) {
+          console.log(`Copying program binary from ${programSrcPath} to ${programDestPath}`);
+          fs.copyFileSync(programSrcPath, programDestPath);
+        } else {
+          console.log(`Program binary already exists at ${programDestPath}, skipping copy`);
+        }
         
-        // Also copy the keypair file if it exists
+        // Also copy the keypair file if it exists and doesn't already exist in the target directory
         const keypairSrcPath = path.resolve(process.cwd(), 'programs/builtin_and_spl_cpi/target/deploy/builtin_and_spl_cpi-keypair.json');
         const keypairDestPath = path.resolve(process.cwd(), 'target/deploy/builtin_and_spl_cpi-keypair.json');
         if (fs.existsSync(keypairSrcPath)) {
-          console.log(`Copying program keypair from ${keypairSrcPath} to ${keypairDestPath}`);
-          fs.copyFileSync(keypairSrcPath, keypairDestPath);
+          if (!fs.existsSync(keypairDestPath)) {
+            console.log(`Copying program keypair from ${keypairSrcPath} to ${keypairDestPath}`);
+            fs.copyFileSync(keypairSrcPath, keypairDestPath);
+          } else {
+            console.log(`Program keypair already exists at ${keypairDestPath}, skipping copy`);
+          }
         }
       } else {
         console.error(`Program binary not found at ${programSrcPath}`);
@@ -143,7 +149,7 @@ describe("test native programs and custom programs", () => {
       }
       
       // Extract the program ID from the output or use the predefined one
-      builtinAndSplCpiProgramId = new PublicKey("J3kSr6FzQLxVzkNHaq2YTddaGPy23E2kBcLKBHGP6oD9");
+      builtinAndSplCpiProgramId = new PublicKey("5c7ieGcQcqaGFCBJzHUwYEvcqhdiZAVZb3sfwWwFvCse");
       
       // Verify the program was deployed
       const programInfo = await SVMContext.SVM_Connection.getAccountInfo(builtinAndSplCpiProgramId);
@@ -221,16 +227,13 @@ describe("test native programs and custom programs", () => {
   // New tests for account_data_anchor_program_example
   it("should initialize account_data_anchor_program_example program", async () => {
     try {
-      // 使用 Anchor.toml 中定义的程序 ID
       accountDataProgramId = new PublicKey("EjVpuq1j4F8vXequaJEGYH8WMpKytdcv24i39say94uA");
       
-      // 验证程序存在
       const programInfo = await SVMContext.SVM_Connection.getAccountInfo(accountDataProgramId);
       console.log("Account Data Program ID:", accountDataProgramId.toString());
       expect(programInfo).not.toBeNull();
       expect(programInfo?.executable).toBe(true);
       
-      // 使用 anchor.workspace 初始化程序，与 builtin_and_spl_cpi 相同
       const provider = new anchor.AnchorProvider(
         SVMContext.SVM_Connection,
         new anchor.Wallet(SVMContext.SVM_USER),
@@ -238,14 +241,12 @@ describe("test native programs and custom programs", () => {
       );
       anchor.setProvider(provider);
       
-      // 直接从 workspace 获取程序
       try {
         accountDataProgram = anchor.workspace.AccountDataAnchorProgramExample;
         console.log("Program initialized successfully from workspace");
       } catch (e) {
         console.log("Failed to get program from workspace, trying alternative method:", e);
         
-        // 如果从 workspace 获取失败，尝试使用 IDL 文件
         const idlPath = path.resolve(process.cwd(), 'target/idl/account_data_anchor_program_example.json');
         if (fs.existsSync(idlPath)) {
           const idl = JSON.parse(fs.readFileSync(idlPath, 'utf8'));
@@ -260,8 +261,7 @@ describe("test native programs and custom programs", () => {
       console.error("Failed to initialize account_data_anchor_program_example program:", error);
     }
   });
-
-  // 修改后续测试中的账户结构
+  
   it("should create address info account", async () => {
     // Skip if program wasn't initialized
     if (!accountDataProgram) {

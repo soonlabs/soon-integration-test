@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/builtin_and_spl_cpi.json`.
  */
 export type BuiltinAndSplCpi = {
-  "address": "J3kSr6FzQLxVzkNHaq2YTddaGPy23E2kBcLKBHGP6oD9",
+  "address": "5c7ieGcQcqaGFCBJzHUwYEvcqhdiZAVZb3sfwWwFvCse",
   "metadata": {
     "name": "builtinAndSplCpi",
     "version": "0.1.0",
