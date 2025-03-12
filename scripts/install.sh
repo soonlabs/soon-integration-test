@@ -62,3 +62,12 @@ if ! command -v anvil >/dev/null 2>&1; then
 else
     echo "Foundry already installed."
 fi
+
+
+# Install anchor if not present
+if ! command -v anvil >/dev/null 2>&1; then
+    echo "Installing anchor..."
+    cargo install --git https://github.com/coral-xyz/anchor avm --force 
+else
+    echo "anchor already installed."
+fi
