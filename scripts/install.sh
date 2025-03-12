@@ -65,7 +65,7 @@ fi
 
 
 # Install anchor if not present
-if ! command -v anvil >/dev/null 2>&1; then
+if ! command -v anchor >/dev/null 2>&1; then
     echo "Installing anchor..."
     cargo install --git https://github.com/coral-xyz/anchor avm --force 
 else
