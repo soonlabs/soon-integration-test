@@ -42,6 +42,11 @@ else
     echo "Rust installed."
 fi
 
+# Handle Cargo.lock version incompatibility
+echo "Checking and fixing Cargo.lock files..."
+find . -name "Cargo.lock" -type f -exec rm {} \;
+find . -name "Cargo.toml" -type f -exec dirname {} \; | xargs -I{} sh -c 'cd {} && cargo update --quiet || true'
+
 # Install anza tool if not present
 if ! command -v solana >/dev/null 2>&1; then
     echo "Installing anza tool..."
