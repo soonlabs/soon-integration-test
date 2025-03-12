@@ -64,10 +64,21 @@ else
 fi
 
 
-# Install anchor if not present
+# Install anchor if not present or update to specific version
 if ! command -v anchor >/dev/null 2>&1; then
     echo "Installing anchor..."
-    cargo install --git https://github.com/coral-xyz/anchor avm --force 
+    cargo install --git https://github.com/coral-xyz/anchor avm --force
+    source "$HOME/.cargo/env"
+    avm install 0.30.1
+    avm use 0.30.1
 else
-    echo "anchor already installed."
+    echo "Checking anchor version..."
+    CURRENT_VERSION=$(anchor --version | cut -d' ' -f2)
+    if [ "$CURRENT_VERSION" != "0.30.1" ]; then
+        echo "Updating anchor to version 0.30.1..."
+        avm install 0.30.1
+        avm use 0.30.1
+    else
+        echo "Anchor 0.30.1 already installed."
+    fi
 fi
