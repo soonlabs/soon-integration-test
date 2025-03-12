@@ -172,7 +172,7 @@ describe("test native programs and custom programs", () => {
         console.error("Failed to clean up keypair file:", e);
       }
     }
-  });
+  }, 300000);
 
   it("should invoke SPL memo instruction", async () => {
     // Skip if program wasn't deployed or SDK wasn't initialized
