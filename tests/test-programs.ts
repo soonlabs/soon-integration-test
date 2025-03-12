@@ -151,8 +151,22 @@ describe("test native programs and custom programs", () => {
       // Extract the program ID from the output or use the predefined one
       builtinAndSplCpiProgramId = new PublicKey("5c7ieGcQcqaGFCBJzHUwYEvcqhdiZAVZb3sfwWwFvCse");
       
+      // Wait longer for deployment to be confirmed (10 seconds)
+      console.log("Waiting for program deployment to be confirmed...");
+      await sleep(10000);
+      
       // Verify the program was deployed
       const programInfo = await SVMContext.SVM_Connection.getAccountInfo(builtinAndSplCpiProgramId);
+      console.log("Program info:", programInfo);
+      
+      if (!programInfo) {
+        throw new Error(`Program not found at address: ${builtinAndSplCpiProgramId.toString()}`);
+      }
+      
+      if (!programInfo.executable) {
+        throw new Error(`Account at ${builtinAndSplCpiProgramId.toString()} is not executable`);
+      }
+      
       console.log("Program deployed at:", builtinAndSplCpiProgramId.toString());
       expect(programInfo).not.toBeNull();
       expect(programInfo?.executable).toBe(true);
