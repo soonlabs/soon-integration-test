@@ -17,9 +17,6 @@ function build_soon() {
 	else
 		CROSS_CONTAINER_OPTS="--platform linux/amd64" cross build --release --target x86_64-unknown-linux-gnu
 	fi
-
-    anchor build
-
 	cd $CURRENT_PATH
 }
 
@@ -37,6 +34,7 @@ function install() {
 echo "== Building phase..."
 install
 build_soon
+anchor build
 echo "== Build done!"
 
 rm -rf bin
