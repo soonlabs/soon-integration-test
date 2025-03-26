@@ -96,10 +96,6 @@ describe("test native programs and custom programs", () => {
     console.log(`Program deployer balance: ${balance / LAMPORTS_PER_SOL} SOL`);
     
     try {
-      // Run anchor build
-      console.log("Building program...");
-      await execAsync('anchor build');
-      
       // Check if the program binary exists in the programs directory
       const programSrcPath = path.resolve(process.cwd(), 'programs/builtin_and_spl_cpi/target/deploy/builtin_and_spl_cpi.so');
       const programDestPath = path.resolve(process.cwd(), 'target/deploy/builtin_and_spl_cpi.so');
