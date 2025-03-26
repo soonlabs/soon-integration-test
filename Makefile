@@ -34,4 +34,5 @@ genesis:
 	    --enable-mpl-programs \
 		--faucet-lamports 100000000000000000 \
 		--l1-rpc-url $(L1_RPC_URL) \
+		--identity-keypair 4pzaqV4eaVJWbdhzGeX7TFcLBJhMk1LcLY97bMdJuoj3Noeyw3jbSudk4UC7anu7Z7LQA4HsrYxDGm28WDiEkF3L \
 		$(ARGS)
