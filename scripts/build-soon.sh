@@ -34,7 +34,7 @@ function install() {
 echo "== Building phase..."
 install
 build_soon
-anchor build
+anchor build --no-idl
 echo "== Build done!"
 
 rm -rf bin
