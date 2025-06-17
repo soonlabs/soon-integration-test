@@ -72,8 +72,24 @@ fi
 # Install anchor if not present or update to specific version
 if ! command -v anchor >/dev/null 2>&1; then
     echo "Installing anchor..."
+    # Save current Rust version
+    CURRENT_RUST_VERSION=$(rustc --version | cut -d' ' -f2)
+    echo "Current Rust version: $CURRENT_RUST_VERSION"
+    
+    # Temporarily upgrade to latest Rust for avm compilation
+    echo "Temporarily upgrading to latest Rust for avm installation..."
+    rustup update
+    rustup default stable
+    
+    # Install avm with latest Rust
     cargo install --git https://github.com/coral-xyz/anchor avm --force
     source "$HOME/.cargo/env"
+    
+    # Switch back to original version
+    echo "Switching back to Rust $CURRENT_RUST_VERSION..."
+    rustup default $CURRENT_RUST_VERSION
+    
+    # Install and use anchor 0.30.1
     avm install 0.30.1
     avm use 0.30.1
 else
