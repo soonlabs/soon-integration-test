@@ -89,7 +89,8 @@ if ! command -v anchor >/dev/null 2>&1; then
     echo "Switching back to Rust $CURRENT_RUST_VERSION..."
     rustup default $CURRENT_RUST_VERSION
     
-    # Install and use anchor 0.30.1
+    # Add avm to PATH and install anchor 0.30.1
+    export PATH="$HOME/.avm/bin:$PATH"
     avm install 0.30.1
     avm use 0.30.1
 else
