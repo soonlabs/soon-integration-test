@@ -1,11 +1,12 @@
 #!/bin/bash
 
+sudo apt-get update
 sudo apt-get install -y \
     build-essential \
     pkg-config \
     libudev-dev llvm libclang-dev \
     protobuf-compiler libssl-dev \
-    clang make curl git \
+    clang make curl git libc6 \
 
 # Check and install Node.js if not present
 if ! command -v node >/dev/null 2>&1; then
