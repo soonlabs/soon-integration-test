@@ -4,7 +4,10 @@
 yarn --cwd ./soon-bridge-tool/
 
 #start anvil
-&> /dev/null anvil --block-time 3 --mixed-mining --slots-in-an-epoch 1 &
+&> /tmp/anvil.log anvil --block-time 3 --mixed-mining --slots-in-an-epoch 1 &
+
+sleep 10
+cat /tmp/anvil.log
 
 export L1_RPC_URL="http://127.0.0.1:8545"
 
