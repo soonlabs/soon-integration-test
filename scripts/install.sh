@@ -76,12 +76,12 @@ if ! command -v anchor >/dev/null 2>&1; then
     CURRENT_RUST_VERSION=$(rustc --version | cut -d' ' -f2)
     echo "Current Rust version: $CURRENT_RUST_VERSION"
     
-    # Temporarily upgrade to latest Rust for avm compilation
-    echo "Temporarily upgrading to latest Rust for avm installation..."
-    rustup update
-    rustup default stable
+    # Temporarily upgrade to Rust 1.82 for avm compilation
+    echo "Temporarily upgrading to Rust 1.82 for avm installation..."
+    rustup install 1.82
+    rustup default 1.82
     
-    # Install avm with latest Rust
+    # Install avm with Rust 1.82
     cargo install --git https://github.com/coral-xyz/anchor avm --force
     source "$HOME/.cargo/env"
     
